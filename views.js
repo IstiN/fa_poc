@@ -1,8 +1,31 @@
-import { DEMO_NETWORK_INVITE, MY_NETWORK_ID, buildChannelInvite, findConversation, getMessages, networkById, searchAll } from './model.js';
+import {
+  DEMO_NETWORK_INVITE, MY_NETWORK_ID, buildChannelInvite, filterConversations, findConversation, getMessages,
+  humanStatus, isLocalConversation, listClock, listFilters, networkById, rowMeta, searchAll,
+} from './model.js';
+
+const ICON_PATHS = {
+  compose: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  search: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.5"/>',
+  plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  send: '<path d="M5 12h13"/><path d="M13 6l6 6-6 6"/>',
+  back: '<path d="M19 12H6"/><path d="M11 6l-6 6 6 6"/>',
+  apps: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
+  activity: '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+  chats: '<path d="M4 5h16v11H9l-5 4z"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+  file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
+  chevron: '<path d="M7 10l5 5 5-5"/>',
+  dot: '<circle cx="12" cy="12" r="6" fill="currentColor"/>',
+};
+
+export function icon(name, className = 'icon') {
+  return `<svg class="${className}" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICON_PATHS[name] ?? ''}</svg>`;
+}
 
 const SECTION_LABELS = {
   chats: 'Chats', activity: 'Activity', inbox: 'Inbox', directory: 'Directory',
-  agents: 'Agents', apps: 'Apps', more: 'More',
+  agents: 'Agents', apps: 'Apps', more: 'More', networks: 'Networks',
 };
 
 const esc = (value = '') => String(value)
@@ -50,21 +73,26 @@ export function appContextLabel(state, data) {
   return found ? `${conversationTitle(found)} · ${networkName(data, conversationNetwork(found))}` : 'Missing context';
 }
 
+function primarySections(state) {
+  return state.variant === 'a' ? ['chats', 'activity', 'apps'] : ['inbox', 'chats', 'agents', 'apps'];
+}
+
 function sectionButtons(state) {
-  const sections = state.variant === 'a'
-    ? ['chats', 'activity', 'directory', 'apps']
-    : ['inbox', 'chats', 'agents', 'apps'];
-  return sections.map((section) => `<button type="button" class="${active(state.section === section)}" data-action="nav-root" data-section="${section}"${current(state.section === section)}>${SECTION_LABELS[section]}</button>`).join('');
+  return primarySections(state).map((section) => `<button type="button" class="${active(state.section === section)}" data-action="nav-root" data-section="${section}"${current(state.section === section)}>${SECTION_LABELS[section]}</button>`).join('');
+}
+
+function sidebarTitle(state) {
+  if (state.variant === 'a' && state.section === 'directory') return 'Networks';
+  return SECTION_LABELS[state.section] ?? 'Fa';
 }
 
 function renderSidebar(state, data) {
-  return `<aside class="sidebar" aria-label="${SECTION_LABELS[state.section] ?? 'Fa'} list">
+  return `<aside class="sidebar" aria-label="${sidebarTitle(state)} list">
     <div class="sidebar-head">
-      <button type="button" class="quiet" data-action="nav-root" data-section="more" aria-label="More and prototype notes"><strong>Fa</strong></button>
-      <div class="head-actions">
-        <button type="button" class="small" data-action="command" title="Search everything (Cmd/Ctrl K)">Search</button>
-        <button type="button" class="small desktop-quick-actions" data-action="quick-actions" title="Quick actions">+</button>
-      </div>
+      <button type="button" class="profile-button" data-action="settings" aria-label="Profile and settings" title="Profile and settings">Fa</button>
+      <h1 class="sidebar-title">${sidebarTitle(state)}</h1>
+      <button type="button" class="search-field" data-action="command" aria-label="Search everything" title="Search everything (Cmd/Ctrl K)">${icon('search')}<span>Search</span><kbd>⌘K</kbd></button>
+      <button type="button" class="new-button" data-action="chat-create-menu" aria-label="New chat, agent, channel or network" title="New">${icon('compose')}<span>New</span></button>
     </div>
     <nav class="section-tabs" aria-label="Product sections">${sectionButtons(state)}</nav>
     ${renderList(state, data)}
@@ -79,54 +107,46 @@ function renderList(state, data) {
   return renderMoreList(state);
 }
 
-function conversationItems(state, data) {
-  const items = [
-    ...data.agents.filter((item) => item.recent).map((item) => ({ kind: 'agent', item })),
-    ...data.channels.filter((item) => item.recent && !item.archived).map((item) => ({ kind: 'channel', item })),
-    ...data.quickChats.filter((item) => item.recent && !item.archived).map((item) => ({ kind: 'quick', item })),
-  ];
-  return items
-    .filter(({ kind, item }) => state.folder === 'all' || (kind === 'quick' ? MY_NETWORK_ID : item.networkId) === state.folder)
-    .sort((left, right) => Number(right.item.pinned) - Number(left.item.pinned) || right.item.updated - left.item.updated);
+function renderFilterChips(state, data) {
+  const { chips, network } = listFilters(data, { filter: state.listFilter ?? 'all', folder: state.folder });
+  return `<div class="filter-chips" role="toolbar" aria-label="Filter chats">
+    ${chips.map((chip) => `<button type="button" class="chip" data-action="list-filter" data-filter="${chip.id}" aria-pressed="${chip.active}">${chip.label}</button>`).join('')}
+    ${network ? `<button type="button" class="chip network-chip" data-action="network-filter" aria-haspopup="dialog" aria-label="Network filter: ${esc(network.label)}">${esc(network.label)}${icon('chevron', 'icon chevron')}</button>` : ''}
+  </div>`;
 }
 
 function renderConversationList(state, data) {
-  const items = conversationItems(state, data);
-  const pinned = items.filter(({ item }) => item.pinned);
-  const recent = items.filter(({ item }) => !item.pinned);
-  return `<div class="list-tools">
-      <select data-change="folder" aria-label="Chat folder">
-        <option value="all"${selected(state.folder === 'all')}>All chats</option>
-        ${data.networks.map((network) => `<option value="${network.id}"${selected(state.folder === network.id)}>${esc(network.name)}</option>`).join('')}
-      </select>
-      <button type="button" class="create-menu-trigger" data-action="chat-create-menu" title="New chat, channel or network" aria-label="Create or manage chats, channels and networks">+</button>
-    </div>
+  const filter = state.listFilter ?? 'all';
+  const sections = filterConversations(data, { filter, folder: state.folder });
+  const now = listClock(data);
+  const count = sections.reduce((sum, section) => sum + section.items.length, 0);
+  const addAgentRow = filter === 'agents'
+    ? `<div class="list-item add-row"><button type="button" class="item-open" data-action="new-agent"><span class="avatar">${icon('plus')}</span><span class="item-copy"><span class="item-title">Add agent</span><span class="item-preview">Joins My Network automatically</span></span></button></div>`
+    : '';
+  const firstRun = filter === 'all' && !count && state.folder === 'all';
+  const emptyText = { all: 'No conversations in this network.', unread: 'No unread conversations.', agents: 'No agents yet.', channels: 'No channels in this network.' }[filter];
+  return `${renderFilterChips(state, data)}
     <div class="list-scroll" data-testid="conversation-list">
-      ${!items.length ? `<div class="empty-state first-run-empty"><span class="empty-symbol">↗</span><h2>No chats yet</h2><p>Start a local Quick chat or add your first persistent agent. It will join My Network automatically.</p><div class="empty-actions"><button type="button" class="primary" data-action="new-chat">Start a chat</button><button type="button" data-action="new-agent">Add agent</button></div></div>` : `${pinned.length ? '<div class="list-section">Pinned</div>' : ''}${pinned.map((found) => renderConversationRow(state, data, found)).join('')}${recent.length ? '<div class="list-section">Recent</div>' : '<div class="empty-state">No conversations in this folder.</div>'}${recent.map((found) => renderConversationRow(state, data, found)).join('')}`}
-      ${items.length ? `<div class="list-footer"><button type="button" class="small" data-action="open-directory">All ${data.agents.length} agents and ${data.channels.length} channels →</button></div>` : ''}
+      ${firstRun ? `<div class="empty-state first-run-empty"><span class="empty-symbol">${icon('chats')}</span><h2>No chats yet</h2><p>Start a local Quick chat or add your first persistent agent. It will join My Network automatically.</p><div class="empty-actions"><button type="button" class="primary" data-action="new-chat">Start a chat</button><button type="button" data-action="new-agent">Add agent</button></div></div>` : `${addAgentRow}${sections.map((section) => `<div class="list-section">${section.label}</div>${section.items.map((found) => renderConversationRow(state, data, found, now)).join('')}`).join('') || `<div class="empty-state">${emptyText}</div>`}`}
+      ${filter === 'all' && count ? `<div class="list-footer"><button type="button" class="link" data-action="list-filter" data-filter="agents">Browse all ${data.agents.length} agents and ${data.channels.length} channels</button></div>` : ''}
     </div>`;
 }
 
-function renderConversationRow(state, data, found) {
-  const { kind, item } = found;
-  const title = conversationTitle(found);
-  const networkId = conversationNetwork(found);
-  const symbol = kind === 'agent' ? 'A' : kind === 'channel' ? '#' : 'Q';
-  const meta = kind === 'channel'
-    ? `${networkName(data, networkId)} · ${item.creatorType === 'agent' ? `by ${item.creatorName}` : 'your channel'}${item.taskBound ? ' · task' : ''}`
-    : kind === 'agent'
-      ? `${networkName(data, networkId)} · ${item.status}`
-      : 'Quick chat · My Network';
-  const badge = item.unread ? String(item.unread) : item.status === 'running' || item.taskBound ? '●' : '';
-  return `<div class="list-item${selected(state.selectedId === item.id && state.section === 'chats')}">
+function renderConversationRow(state, data, found, now = listClock(data)) {
+  const { item } = found;
+  const meta = rowMeta(data, found, now);
+  const tags = [
+    meta.networkTag ? `<span class="row-tag">${esc(meta.networkTag)}</span>` : '',
+    meta.taskTag ? '<span class="row-tag">task</span>' : '',
+    meta.archived ? '<span class="row-tag">archived</span>' : '',
+  ].join('');
+  return `<div class="list-item conversation-row${selected(state.selectedId === item.id && state.section === 'chats')}">
     <button type="button" class="item-open" data-action="open-conversation" data-id="${esc(item.id)}">
-      <span class="item-kind">${symbol}</span>
+      <span class="avatar${meta.kind === 'channel' ? ' square' : ''}">${esc(meta.avatar)}${meta.working ? `<span class="presence" title="Working">${icon('dot', 'icon dot')}</span>` : ''}</span>
       <span class="item-copy">
-        <span class="item-title-line"><span class="item-title">${esc(title)}</span></span>
-        <span class="item-preview">${esc(item.last ?? '')}</span>
-        <span class="item-meta">${esc(meta)}</span>
+        <span class="item-title-line"><span class="item-title">${esc(meta.title)}</span>${tags}<span class="item-time">${esc(meta.time)}</span></span>
+        <span class="item-preview-line"><span class="item-preview">${meta.working ? 'Working… · ' : ''}${esc(meta.preview)}</span>${meta.unread ? `<span class="unread-badge" aria-label="${meta.unread} unread">${meta.unread}</span>` : ''}</span>
       </span>
-      ${badge ? `<span class="item-badge">${badge}</span>` : ''}
     </button>
   </div>`;
 }
@@ -185,7 +205,7 @@ function renderEventRow(state, data, event) {
 }
 
 function renderDirectoryList(state, data) {
-  const tab = state.section === 'agents' ? 'agents' : state.directoryTab;
+  const tab = state.section === 'agents' ? 'agents' : state.variant === 'a' ? 'networks' : state.directoryTab;
   const query = state.directoryQuery.toLocaleLowerCase();
   const network = state.directoryNetwork;
   let rows = '';
@@ -208,15 +228,15 @@ function renderDirectoryList(state, data) {
     }).join('');
   }
   return `<div class="list-tools">
-      ${state.section === 'directory' ? `<div class="section-tabs" style="flex:1">${['agents', 'channels', 'networks'].map((item) => `<button type="button" class="${active(tab === item)}" data-action="directory-tab" data-tab="${item}">${item[0].toUpperCase() + item.slice(1)}</button>`).join('')}</div>` : '<span class="count-label">Persistent agents</span>'}
+      ${state.section === 'directory' && state.variant === 'a' ? '<button type="button" class="small" data-action="nav-root" data-section="chats">← Chats</button><span class="count-label">Networks you belong to</span><button type="button" class="small" data-action="networks">Create / Join</button>' : state.section === 'directory' ? `<div class="section-tabs" style="flex:1">${['agents', 'channels', 'networks'].map((item) => `<button type="button" class="${active(tab === item)}" data-action="directory-tab" data-tab="${item}">${item[0].toUpperCase() + item.slice(1)}</button>`).join('')}</div>` : '<span class="count-label">Persistent agents</span>'}
     </div>
     <div class="list-tools">
       <form data-form="directory-search"><input name="query" value="${esc(state.directoryQuery)}" placeholder="Search directory" aria-label="Search directory"><button type="submit" class="small">Go</button></form>
     </div>
-    <div class="list-tools">
+    ${tab === 'networks' ? '' : `<div class="list-tools">
       <select data-change="directory-network" aria-label="Network filter"><option value="all">All networks</option>${data.networks.map((item) => `<option value="${item.id}"${selected(network === item.id)}>${esc(item.name)}</option>`).join('')}</select>
       <span class="count-label">${count}</span>
-    </div>
+    </div>`}
     <div class="list-scroll" data-testid="directory-list">${rows || '<div class="empty-state">No directory results.</div>'}</div>`;
 }
 
@@ -292,7 +312,7 @@ function renderMain(state, data) {
 }
 
 function headerBack() {
-  return '<button type="button" class="mobile-back small" data-action="back-list" aria-label="Back to list">←</button>';
+  return `<button type="button" class="mobile-back icon-button" data-action="back-list" aria-label="Back to list">${icon('back')}</button>`;
 }
 
 function renderChat(state, data) {
@@ -300,42 +320,38 @@ function renderChat(state, data) {
   if (!found) return `<main class="main">${renderEmpty(state, 'Choose a conversation')}</main>`;
   const { kind, item } = found;
   const title = conversationTitle(found);
-  const networkId = conversationNetwork(found);
   const messages = getMessages(data, item.id);
   const runningEvent = kind === 'channel' ? data.events.find((event) => event.channelId === item.id && event.status === 'running') : null;
-  const subtitle = kind === 'agent'
-    ? `${networkName(data, networkId)} · persistent ${item.status}`
-    : kind === 'channel'
-      ? `${networkName(data, networkId)} · ${item.memberIds.length} agents · ${item.taskBound ? 'task-bound' : 'persistent'}`
-      : 'Quick chat · no persistent agent';
-  const supportsModel = kind === 'agent' || kind === 'quick';
+  const meta = rowMeta(data, found);
+  const subtitle = humanStatus(data, found);
+  const supportsModel = isLocalConversation(found);
   const currentModel = item.model ?? 'Auto';
-  const modelControl = supportsModel ? `<button type="button" class="model-trigger" data-action="model-picker" data-id="${item.id}" title="Change model">${esc(currentModel)}</button>` : '';
+  const modelControl = supportsModel ? `<button type="button" class="model-trigger" data-action="model-picker" data-id="${item.id}" title="Change model" aria-label="Model: ${esc(currentModel)}">${esc(currentModel)}</button>` : '';
   return `<main class="main">
     <header class="content-head">
       ${headerBack()}
+      <span class="avatar${kind === 'channel' ? ' square' : ''}">${esc(meta.avatar)}${meta.working ? `<span class="presence">${icon('dot', 'icon dot')}</span>` : ''}</span>
       <div class="title-block"><h1>${esc(title)}</h1><div class="subtitle">${esc(subtitle)}</div></div>
       <div class="head-actions">
         ${runningEvent ? `<button type="button" class="small desktop-optional" data-action="complete-task" data-id="${runningEvent.id}">Finish task</button>` : ''}
-        ${kind === 'channel' ? `<button type="button" class="small desktop-optional" data-action="invite-agent" data-id="${item.id}">Invite</button>` : ''}
-        <button type="button" class="small" data-action="quick-apps">Apps</button>
-        <button type="button" class="small" data-action="conversation-details" data-id="${item.id}">Details</button>
+        <button type="button" class="icon-button" data-action="conversation-details" data-id="${item.id}" aria-label="Details" title="Details">${icon('info')}</button>
       </div>
     </header>
     ${item.archived ? '<div class="notice">Archived · history is retained and searchable</div>' : ''}
     <div class="messages" data-testid="messages">
-      ${messages.map((message, index) => `${kind === 'agent' && index === 2 ? '<div class="topic-marker">Earlier topic · same agent</div>' : ''}${renderMessage(item, kind, message)}`).join('')}
+      ${messages.map((message, index) => `${kind === 'agent' && index === 2 ? '<div class="topic-marker">Earlier topic</div>' : ''}${renderMessage(item, kind, message)}`).join('')}
     </div>
     ${item.archived
       ? '<div class="archived-composer">Read-only archive. Restore or link it from Details.</div>'
-      : `<div class="composer-zone"><div class="command-tips" data-testid="command-tips" hidden>${supportsModel ? '<button type="button" data-action="chat-command" data-command="model"><strong>/model</strong><span>Change this agent\'s model</span></button>' : ''}<button type="button" data-action="chat-command" data-command="apps"><strong>/apps</strong><span>Open the app launcher</span></button><button type="button" data-action="chat-command" data-command="new"><strong>/new</strong><span>Compose another chat</span></button></div><div class="composer-chips" aria-label="Quick composer actions">${supportsModel ? `<button type="button" data-action="chat-command" data-command="model">Model: ${esc(currentModel)}</button>` : ''}<button type="button" data-action="chat-command" data-command="apps">Apps</button><button type="button" data-action="chat-command" data-command="new">New chat</button></div><form class="composer" data-form="send-message" data-id="${item.id}"><button type="button" class="small" data-action="quick-apps" aria-label="Open apps">+</button><input name="message" data-chat-input autocomplete="off" placeholder="Message ${esc(title)} · / for commands" aria-label="Message ${esc(title)}" required>${modelControl}<button type="submit" class="primary send">Send</button></form></div>`}
+      : `<div class="composer-zone"><div class="command-tips" data-testid="command-tips" hidden>${supportsModel ? '<button type="button" data-action="chat-command" data-command="model"><strong>/model</strong><span>Change this agent\'s model</span></button>' : ''}<button type="button" data-action="chat-command" data-command="apps"><strong>/apps</strong><span>Open the app launcher</span></button><button type="button" data-action="chat-command" data-command="new"><strong>/new</strong><span>Compose another chat</span></button></div><div class="composer-chips" aria-label="Quick composer actions">${supportsModel ? `<button type="button" data-action="chat-command" data-command="model">Model: ${esc(currentModel)}</button>` : ''}<button type="button" data-action="chat-command" data-command="apps">Apps</button></div><form class="composer" data-form="send-message" data-id="${item.id}"><button type="button" class="icon-button attach" data-action="quick-apps" aria-label="Attach files or open apps" title="Attach · Apps, Files">${icon('plus')}</button><input name="message" data-chat-input autocomplete="off" placeholder="Message ${esc(title)}" aria-label="Message ${esc(title)}" required>${modelControl}<button type="submit" class="primary send" aria-label="Send">${icon('send')}<span>Send</span></button></form></div>`}
   </main>`;
 }
 
 function renderMessage(item, kind, message) {
   if (message.from === 'system') return `<div class="message system">${esc(message.text)}</div>`;
   const from = message.from === 'user' ? 'You' : kind === 'channel' ? item.creatorName : item.name ?? 'Quick agent';
-  return `<div class="message ${message.from === 'user' ? 'user' : 'agent'}"><div class="message-from">${esc(from)}</div><div class="message-text">${esc(message.text)}</div></div>`;
+  const showFrom = kind === 'channel' && message.from !== 'user';
+  return `<div class="message ${message.from === 'user' ? 'user' : 'agent'}">${showFrom ? `<div class="message-from">${esc(from)}</div>` : `<span class="sr-only">${esc(from)}: </span>`}<div class="message-text">${esc(message.text)}</div></div>`;
 }
 
 function renderEventDetail(state, data) {
@@ -364,6 +380,9 @@ function renderEventDetail(state, data) {
 }
 
 function renderDirectoryOverview(state, data) {
+  if (state.variant === 'a') {
+    return `<main class="main"><header class="content-head">${headerBack()}<div class="title-block"><h1>Networks</h1><div class="subtitle">${data.networks.length} networks</div></div></header><div class="content-scroll"><div class="content-narrow"><h2>Manage networks</h2><p>My Network is the default home of every new agent. Other networks are created or joined explicitly; cross-network access always needs approval.</p><div class="action-row"><button type="button" class="primary" data-action="new-network">Create a network</button><button type="button" data-action="join-network">Join a network</button><button type="button" data-action="new-agent">Add agent → My Network</button></div><div class="wire-panel dashed">Agents and channels are browsed in Chats with the Agents and Channels filters.</div></div></div></main>`;
+  }
   return `<main class="main"><header class="content-head"><div class="title-block"><h1>Directory</h1><div class="subtitle">Full inventory without putting every row into Chats</div></div></header><div class="content-scroll"><div class="content-narrow"><h2>${data.agents.length} agents · ${data.channels.length} channels · ${data.networks.length} networks</h2><p>Search or filter the list. Opening an agent or channel takes you to the same endless conversation, not a new session.</p><div class="action-row"><button type="button" class="primary" data-action="new-agent">Add agent → My Network</button><button type="button" data-action="new-channel">Group agents / Create channel</button><button type="button" data-action="command">Search everything</button></div><div class="wire-panel dashed">My Network is the default home of every new persistent agent. Other networks are joined explicitly.</div></div></div></main>`;
 }
 
@@ -413,21 +432,23 @@ function renderAppContent(state, data, app) {
 
 function renderBottomNav(state) {
   const sections = state.variant === 'a'
-    ? ['chats', 'activity', 'apps', 'more']
+    ? ['chats', 'activity', 'apps']
     : ['inbox', 'chats', 'apps', 'more'];
-  return `<nav class="bottom-nav" aria-label="Mobile navigation">${sections.map((section) => `<button type="button" class="${active(state.section === section || (section === 'more' && ['directory', 'agents'].includes(state.section)))}" data-action="nav-root" data-section="${section}"${current(state.section === section)}>${SECTION_LABELS[section]}</button>`).join('')}</nav>`;
+  return `<nav class="bottom-nav" aria-label="Mobile navigation">${sections.map((section) => `<button type="button" class="${active(state.section === section || (section === 'more' && ['directory', 'agents'].includes(state.section)) || (section === 'chats' && state.variant === 'a' && state.section === 'directory'))}" data-action="nav-root" data-section="${section}"${current(state.section === section)}>${SECTION_LABELS[section]}</button>`).join('')}</nav>`;
 }
 
 function renderQuickFab() {
-  return '<button type="button" class="quick-fab" data-action="quick-actions" aria-label="Quick actions" title="Quick actions">+</button>';
+  return `<button type="button" class="quick-fab" data-action="chat-create-menu" aria-label="New chat, agent, channel or network" title="New">${icon('compose')}</button>`;
 }
 
 function renderFoldSplitter() {
   return '<div class="fold-splitter" data-fold-splitter role="separator" aria-label="Resize chat list" aria-orientation="vertical"><span></span></div>';
 }
 
-function renderFoldActionRail() {
-  return `<aside class="fold-action-rail" aria-label="Quick action rail"><div class="rail-status"><strong>Fa</strong><span>online</span></div><button type="button" data-action="chat-create-menu"><strong>+</strong><span>New</span></button><button type="button" data-action="command"><strong>/</strong><span>Search</span></button><button type="button" data-action="nav-root" data-section="apps"><strong>▦</strong><span>Apps</span></button><button type="button" data-action="open-activity"><strong>●</strong><span>Activity</span></button><div class="rail-spacer"></div><button type="button" data-action="nav-root" data-section="more"><strong>…</strong><span>More</span></button><div class="rail-network">My<br>Network</div></aside>`;
+const RAIL_ICONS = { chats: 'chats', inbox: 'activity', activity: 'activity', agents: 'chats', apps: 'apps' };
+
+function renderFoldActionRail(state) {
+  return `<aside class="fold-action-rail" aria-label="Navigation rail"><div class="rail-status"><strong>Fa</strong><span>online</span></div>${primarySections(state).map((section) => `<button type="button" class="${active(state.section === section)}" data-action="nav-root" data-section="${section}"${current(state.section === section)}>${icon(RAIL_ICONS[section])}<span>${SECTION_LABELS[section]}</span></button>`).join('')}<div class="rail-spacer"></div><button type="button" data-action="settings" aria-label="Profile and settings">${icon('settings')}<span>Settings</span></button><div class="rail-network">My<br>Network</div></aside>`;
 }
 
 function modalFrame(title, body, wide = false) {
@@ -497,7 +518,7 @@ function renderModal(state, data) {
   if (modal.type === 'quick-actions') return modalFrame('Quick actions', `<div class="modal-list">${renderQuickActions()}</div>`);
   if (modal.type === 'new-chat') return renderNewChatModal(state, data);
   if (modal.type === 'chat-create-menu') {
-    return modalFrame('Create / manage', `<div class="modal-list"><button type="button" class="model-option" data-action="new-chat"><span><strong>New chat</strong><small>Compose to local or network agents</small></span><span>→</span></button><button type="button" class="model-option" data-action="new-channel"><span><strong>New channel</strong><small>Persistent team or task-bound group</small></span><span>→</span></button><button type="button" class="model-option" data-action="networks"><span><strong>Networks</strong><small>Create a network or join with an invite</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-channels"><span><strong>Manage channels</strong><small>Search, open and inspect existing channels</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-networks"><span><strong>Manage networks</strong><small>My Network and additional networks</small></span><span>→</span></button></div>`);
+    return modalFrame('New', `<div class="modal-list"><button type="button" class="model-option" data-action="new-chat"><span><strong>New chat</strong><small>Compose to local or network agents</small></span><span>→</span></button><button type="button" class="model-option" data-action="new-agent"><span><strong>Add agent</strong><small>Persistent agent · joins My Network automatically</small></span><span>→</span></button><button type="button" class="model-option" data-action="new-channel"><span><strong>New channel</strong><small>Persistent team or task-bound group</small></span><span>→</span></button><button type="button" class="model-option" data-action="networks"><span><strong>Networks</strong><small>Create a network or join with an invite</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-channels"><span><strong>Manage channels</strong><small>Search, open and inspect existing channels</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-networks"><span><strong>Manage networks</strong><small>My Network and additional networks</small></span><span>→</span></button></div>`);
   }
   if (modal.type === 'networks') {
     return modalFrame('Networks', `<p class="help">Create your own space or join an existing one. Joining never changes the default My Network.</p><div class="modal-list"><button type="button" class="model-option" data-action="new-network"><span><strong>Create a network</strong><small>Start an empty space for your agents and channels</small></span><span>→</span></button><button type="button" class="model-option" data-action="join-network"><span><strong>Join a network</strong><small>Use an invite link or network code</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-networks"><span><strong>My networks</strong><small>Open and manage existing memberships</small></span><span>→</span></button></div>`);
@@ -522,7 +543,16 @@ function renderModal(state, data) {
     return modalFrame(board.name, `<p class="help">${esc(board.description)} · ${apps.length} widgets</p>${apps.length ? renderAppTiles(apps) : '<div class="empty-state">Empty board. Add widgets from My Apps or the Widget Store.</div>'}<div class="modal-actions"><button type="button" data-action="board-store">Browse Widget Store</button><button type="button" class="primary" data-action="close-modal">Done</button></div>`, true);
   }
   if (modal.type === 'quick-apps') {
-    return modalFrame('Open app', `<p class="help">Desktop: side panel, with Pin and Fullscreen. Mobile: one fullscreen surface.</p><div class="modal-list">${data.apps.filter((app) => app.favorite || app.recent || app.running).map((app) => `<div class="list-item"><button type="button" class="item-open" data-action="open-app" data-id="${app.id}"><span class="item-kind">□</span><span class="item-copy"><span class="item-title">${esc(app.name)}</span><span class="item-preview">${app.running ? 'Running' : app.favorite ? 'Favorite' : 'Recent'} · ${esc(app.description)}</span></span></button></div>`).join('')}</div><div class="modal-actions"><button type="button" data-action="nav-root" data-section="apps">All apps</button></div>`);
+    const apps = data.apps.filter((app) => app.id !== 'app:files' && (app.favorite || app.recent || app.running));
+    const files = appById(data, 'app:files');
+    return modalFrame('Attach', `<div class="list-section">Files</div><div class="modal-list">${files ? `<div class="list-item"><button type="button" class="item-open" data-action="open-app" data-id="${files.id}"><span class="avatar square">${icon('file')}</span><span class="item-copy"><span class="item-title">Files</span><span class="item-preview">Browse files and hand them to the agent</span></span></button></div>` : '<div class="empty-state">No file source connected.</div>'}</div><div class="list-section">Apps</div><div class="modal-list">${apps.map((app) => `<div class="list-item"><button type="button" class="item-open" data-action="open-app" data-id="${app.id}"><span class="avatar square">${icon('apps')}</span><span class="item-copy"><span class="item-title">${esc(app.name)}</span><span class="item-preview">${app.running ? 'Running' : app.favorite ? 'Favorite' : 'Recent'} · ${esc(app.description)}</span></span></button></div>`).join('') || '<div class="empty-state">No apps yet.</div>'}</div><p class="help">Desktop: side panel with Pin and Fullscreen. Mobile: one fullscreen surface.</p><div class="modal-actions"><button type="button" data-action="nav-root" data-section="apps">All apps</button></div>`);
+  }
+  if (modal.type === 'network-filter') {
+    const options = [{ id: 'all', name: 'All networks' }, ...data.networks];
+    return modalFrame('Show chats from', `<div class="modal-list">${options.map((network) => `<button type="button" class="model-option" data-action="select-folder" data-id="${network.id}" aria-pressed="${state.folder === network.id}"><span><strong>${esc(network.name)}</strong><small>${network.id === 'all' ? 'Every network you belong to' : network.id === MY_NETWORK_ID ? 'Default home for new agents' : 'Additional network'}</small></span><span>${state.folder === network.id ? 'Selected' : ''}</span></button>`).join('')}</div><div class="modal-actions"><button type="button" data-action="open-networks">Manage networks</button></div>`);
+  }
+  if (modal.type === 'settings') {
+    return modalFrame('Profile & settings', `<div class="modal-list"><button type="button" class="model-option" data-action="open-networks"><span><strong>Networks</strong><small>My Network and ${Math.max(data.networks.length - 1, 0)} additional · create, join, manage</small></span><span>→</span></button><button type="button" class="model-option" data-action="open-directory"><span><strong>All agents</strong><small>${data.agents.length} agents · Chats → Agents filter</small></span><span>→</span></button><button type="button" class="model-option" data-action="notes"><span><strong>UX notes</strong><small>What this wireframe is testing</small></span><span>→</span></button><button type="button" class="model-option" data-action="reset-demo"><span><strong>Reset demo</strong><small>Restore generated data and preferences</small></span><span>→</span></button></div>`);
   }
   if (modal.type === 'command') {
     return modalFrame('Search / Command', `<form data-form="command"><input class="command-input" data-command-input name="query" value="${esc(state.commandQuery)}" placeholder="Agent, channel, network, app or action" aria-label="Search everything" autofocus><div class="command-results" data-testid="command-results">${renderCommandResults(state, data)}</div></form>`, true);
@@ -562,7 +592,7 @@ function renderModal(state, data) {
     return modalFrame(`Model · ${conversationTitle(found)}`, `<p class="help">Applies to future messages in this endless conversation. It does not create a session.</p><div class="modal-list model-options">${options.map((model) => `<button type="button" class="model-option" data-action="select-model" data-id="${found.item.id}" data-model="${model}"><span><strong>${model}</strong><small>${model === 'Auto' ? 'Recommended routing' : 'Wireframe provider option'}</small></span><span>${(found.item.model ?? 'Auto') === model ? 'Selected' : 'Choose'}</span></button>`).join('')}</div>`);
   }
   if (modal.type === 'notes') {
-    return modalFrame('What to evaluate', `<ol class="help"><li>A starts in Chats; C starts in Inbox.</li><li>New chat: 0 recipients = local Quick chat, 1 = direct, 2+ = mixed-capable group.</li><li>Mobile quick actions use the floating +; Fold adds a draggable center splitter and right action rail.</li><li>Use mobile Model/Apps/New chat chips without typing /, or use slash commands on a keyboard.</li><li>Empty in the prototype bar previews first-run states without deleting demo data.</li><li>Networks supports Create or Join; My Apps has New app, separate from Boards and Store.</li><li>Channel Details → Invite agent shows QR and CLI instructions with channel-only scope.</li><li>Add an agent: it joins My Network automatically.</li><li>New task: the agent creates a task channel and groups three other agents.</li><li>Finish that task: the channel is archived, not deleted.</li><li>Channel Details → Invite cross-network: no access changes before approval.</li><li>Open Apps from a chat, pin an App, switch chats, then try fullscreen.</li><li>Mobile preview: Chats → Channel → App → Close returns without nested drawers.</li><li>Cmd/Ctrl K searches all ${data.agents.length} agent records and ${data.channels.length} channels.</li></ol><div class="wire-panel dashed">Wireframe only: grayscale, fake data, no backend calls.</div>`);
+    return modalFrame('What to evaluate', `<ol class="help"><li>A starts in Chats; C starts in Inbox.</li><li>New chat: 0 recipients = local Quick chat, 1 = direct, 2+ = mixed-capable group.</li><li>One New entry: header New on desktop/Fold, floating New on mobile. Fold adds a draggable center splitter and a right navigation rail.</li><li>Use mobile Model/Apps chips without typing / (Model only for local agents), or use slash commands on a keyboard.</li><li>Chats filters: All · Unread · Agents · Channels and a network chip; Agents replaces the old Directory.</li><li>Empty in the prototype bar previews first-run states without deleting demo data.</li><li>Networks supports Create or Join; My Apps has New app, separate from Boards and Store.</li><li>Channel Details → Invite agent shows QR and CLI instructions with channel-only scope.</li><li>Add an agent: it joins My Network automatically.</li><li>New task: the agent creates a task channel and groups three other agents.</li><li>Finish that task: the channel is archived, not deleted.</li><li>Channel Details → Invite cross-network: no access changes before approval.</li><li>Open Apps from a chat, pin an App, switch chats, then try fullscreen.</li><li>Mobile preview: Chats → Channel → App → Close returns without nested drawers.</li><li>Cmd/Ctrl K searches all ${data.agents.length} agent records and ${data.channels.length} channels.</li></ol><div class="wire-panel dashed">Wireframe only: grayscale, fake data, no backend calls.</div>`);
   }
   if (modal.type === 'reset-demo') {
     return modalFrame('Reset demo?', '<p>All created agents, chats, channels and event changes will be discarded. Pinned App and viewport preferences are also reset.</p><div class="modal-actions"><button type="button" data-action="close-modal">Cancel</button><button type="button" class="primary" data-action="confirm-reset">Reset everything</button></div>');
@@ -593,14 +623,14 @@ function renderConversationDetailsModal(state, data) {
   const { kind, item } = found;
   if (kind === 'agent') {
     const created = data.channels.filter((channel) => channel.creatorId === item.id);
-    return modalFrame(item.name, `<div class="detail-grid"><div class="detail-cell"><div class="label">Type</div><div class="value">Persistent agent</div></div><div class="detail-cell"><div class="label">Home</div><div class="value">${esc(networkName(data, item.networkId))}</div></div><div class="detail-cell"><div class="label">Status</div><div class="value">${item.status}</div></div><div class="detail-cell"><div class="label">Channels created</div><div class="value">${created.length}</div></div></div><p>${esc(item.purpose)}</p><div class="action-row"><button type="button" class="primary" data-action="new-task" data-id="${item.id}">New task</button><button type="button" data-action="agent-create-channel" data-id="${item.id}">Create channel as agent</button><button type="button" data-action="quick-apps">Open app</button></div><div class="wire-panel dashed">One identity and one endless main conversation. Topics and branches do not create sessions.</div>`);
+    return modalFrame(item.name, `<div class="detail-grid"><div class="detail-cell"><div class="label">Type</div><div class="value">Persistent agent</div></div><div class="detail-cell"><div class="label">Home</div><div class="value">${esc(networkName(data, item.networkId))}</div></div><div class="detail-cell"><div class="label">Status</div><div class="value">${esc(humanStatus(data, found))}</div></div><div class="detail-cell"><div class="label">Channels created</div><div class="value">${created.length}</div></div></div><p>${esc(item.purpose)}</p><div class="action-row"><button type="button" class="primary" data-action="new-task" data-id="${item.id}">New task</button><button type="button" data-action="agent-create-channel" data-id="${item.id}">Create channel as agent</button><button type="button" data-action="quick-apps">Open app</button><button type="button" data-action="open-network" data-id="${item.networkId}">Open ${esc(networkName(data, item.networkId))}</button></div><div class="wire-panel dashed">One identity and one endless main conversation. Topics and branches do not create sessions.</div>`);
   }
   if (kind === 'quick') {
     return modalFrame(item.title, `<p class="help">Quick chat · ${item.archived ? 'archived' : 'active'} · no persistent identity.</p><div class="action-row"><button type="button" class="primary" data-action="convert-quick" data-id="${item.id}">Become agent → My Network</button><button type="button" data-action="link-agent" data-id="${item.id}">Link to existing agent</button>${!item.archived ? `<button type="button" data-action="archive-quick" data-id="${item.id}">Archive</button>` : ''}</div>${item.linkedAgentId ? `<button type="button" data-action="open-conversation" data-id="${item.linkedAgentId}">Open linked agent</button>` : ''}`);
   }
   const members = item.memberIds.map((id) => data.agents.find((agent) => agent.id === id)).filter(Boolean);
   const runningEvent = data.events.find((event) => event.channelId === item.id && event.status === 'running');
-  return modalFrame(`#${item.name}`, `<div class="detail-grid"><div class="detail-cell"><div class="label">Network</div><div class="value">${esc(networkName(data, item.networkId))}</div></div><div class="detail-cell"><div class="label">Created by</div><div class="value">${esc(item.creatorName)} · ${item.creatorType}</div></div><div class="detail-cell"><div class="label">Lifetime</div><div class="value">${item.taskBound ? 'Task-bound' : 'Persistent'}${item.archived ? ' · archived' : ''}</div></div><div class="detail-cell"><div class="label">Members</div><div class="value">${members.length}</div></div></div><p>${esc(item.purpose)}</p><h3>Agent members</h3><div class="wire-panel">${members.map((agent) => `<div class="wire-row"><span>${esc(agent.name)}</span><span class="muted">${esc(networkName(data, agent.networkId))}</span></div>`).join('')}</div><div class="action-row">${runningEvent ? `<button type="button" class="primary" data-action="complete-task" data-id="${runningEvent.id}">Complete task + archive channel</button>` : ''}<button type="button" class="primary" data-action="invite-agent" data-id="${item.id}">Invite agent · QR / CLI</button><button type="button" data-action="invite-cross-network" data-id="${item.id}">Add existing agent with approval</button></div>`, true);
+  return modalFrame(`#${item.name}`, `<div class="detail-grid"><div class="detail-cell"><div class="label">Network</div><div class="value">${esc(networkName(data, item.networkId))}</div></div><div class="detail-cell"><div class="label">Created by</div><div class="value">${esc(item.creatorName)} · ${item.creatorType}</div></div><div class="detail-cell"><div class="label">Lifetime</div><div class="value">${item.taskBound ? 'Task-bound' : 'Persistent'}${item.archived ? ' · archived' : ''}</div></div><div class="detail-cell"><div class="label">Members</div><div class="value">${members.length}</div></div></div><p>${esc(item.purpose)}</p><h3>Agent members</h3><div class="wire-panel">${members.map((agent) => `<div class="wire-row"><span>${esc(agent.name)}</span><span class="muted">${esc(networkName(data, agent.networkId))}</span></div>`).join('')}</div><div class="action-row">${runningEvent ? `<button type="button" class="primary" data-action="complete-task" data-id="${runningEvent.id}">Complete task + archive channel</button>` : ''}<button type="button" class="primary" data-action="invite-agent" data-id="${item.id}">Invite agent · QR / CLI</button><button type="button" data-action="invite-cross-network" data-id="${item.id}">Add existing agent with approval</button><button type="button" data-action="open-network" data-id="${item.networkId}">Open ${esc(networkName(data, item.networkId))}</button></div>`, true);
 }
 
 function renderQrPreview(value) {
@@ -665,7 +695,7 @@ export function renderShell(state, data) {
     ${renderBottomNav(state)}
     ${state.appFullScreen && state.appPanel ? renderAppSurface(state, data, true) : ''}
     ${renderQuickFab()}
-    ${renderFoldActionRail()}
+    ${renderFoldActionRail(state)}
     ${renderModal(state, data)}
     ${state.keyboardOpen ? renderMobileKeyboard() : ''}
   </div>`;

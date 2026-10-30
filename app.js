@@ -71,6 +71,7 @@ const state = {
   selectedNetworkId: ['directory', 'agents'].includes(initialRoute.section) ? initialRoute.id : null,
   mobileDetail: Boolean(initialRoute.id),
   folder: 'all',
+  listFilter: 'all',
   activityFilter: 'all',
   directoryTab: 'agents',
   directoryNetwork: 'all',
@@ -221,6 +222,7 @@ function setEmptyPreview(enabled) {
   state.appMobileOpen = false;
   state.appFullScreen = false;
   state.folder = 'all';
+  state.listFilter = 'all';
   state.activityFilter = 'all';
   state.directoryNetwork = 'all';
   state.appsTab = 'my';
@@ -464,14 +466,36 @@ const actions = {
   'open-conversation': (element) => navigate('chats', element.dataset.id, { detail: true }),
   'open-event': (element) => navigate(state.variant === 'c' ? 'inbox' : 'activity', element.dataset.id, { detail: true }),
   'open-directory': () => {
+    if (state.variant === 'a') {
+      state.listFilter = 'agents';
+      navigate('chats');
+      return;
+    }
     state.directoryTab = 'agents';
     navigate('directory');
   },
+  'list-filter': (element) => {
+    state.listFilter = element.dataset.filter;
+    if (state.section === 'chats') render();
+    else navigate('chats');
+  },
+  'network-filter': () => openModal('network-filter'),
+  'select-folder': (element) => {
+    state.folder = element.dataset.id;
+    state.modal = null;
+    render();
+  },
+  'settings': () => openModal('settings'),
   'open-networks': () => {
     state.directoryTab = 'networks';
     navigate('directory');
   },
   'open-channels': () => {
+    if (state.variant === 'a') {
+      state.listFilter = 'channels';
+      navigate('chats');
+      return;
+    }
     state.directoryTab = 'channels';
     navigate('directory');
   },
@@ -563,7 +587,7 @@ function resetDemo() {
   populatedData = data;
   Object.assign(state, {
     variant: 'a', section: 'chats', selectedId: 'agent:my:0', selectedEventId: 'event:deploy',
-    selectedNetworkId: null, mobileDetail: false, folder: 'all', activityFilter: 'all',
+    selectedNetworkId: null, mobileDetail: false, folder: 'all', listFilter: 'all', activityFilter: 'all',
     directoryTab: 'agents', directoryNetwork: 'all', directoryQuery: '', appFilter: 'all', appQuery: '', appsTab: 'my',
     modal: null, commandQuery: '', appPanel: null, appMobileOpen: false,
     appFullScreen: false, viewport: 'desktop', keyboardOpen: false, emptyPreview: false,

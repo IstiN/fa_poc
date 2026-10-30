@@ -28,14 +28,15 @@ npm start
 - **C · Pulse** — стартовый раздел Inbox: approvals, фоновые задачи, результаты
   и непрочитанное.
 - **Desktop / Mobile / Fold** — переключение адаптивного preview. Fold показывает
-  двухпанельный layout с зарезервированным правым action rail: New, Search,
-  Apps, Activity и More. Центральный splitter можно перетаскивать, меняя ширину
+  двухпанельный layout с правым navigation rail: Chats, Activity, Apps и
+  Settings (New и Search — в шапке списка). Центральный splitter можно перетаскивать, меняя ширину
   списка и диалога. На обычном телефоне mobile-layout включается по ширине.
 - **Keyboard** — включает экранную wireframe-клавиатуру в mobile preview. Она
   также открывается по тапу на текстовое поле; клавиши вводят текст, `Hide` или
   `return` скрывают её. Composer и mobile bottom-sheet остаются над клавиатурой.
 - **Empty** — non-destructive first-run preview: пустые Chats, Inbox, My Apps и
   My Boards. Повторное нажатие возвращает заполненное demo без потери его данных.
+- **Styleguide** — ссылка на `styleguide.html` (компоненты wireframe).
 
 Прямой вход в mobile-диалог сразу с keyboard:
 
@@ -45,6 +46,8 @@ npm start
 Другие прямые preview:
 
 - **A + Mobile + FAB:** `http://127.0.0.1:4173/?viewport=mobile#/a/chats`
+- **A + Mobile + channel (без Model chip):** `http://127.0.0.1:4173/?viewport=mobile#/a/chats/channel:my:1`
+- **A + Networks manager:** `http://127.0.0.1:4173/#/a/directory`
 - **A + Fold + action rail/splitter:** `http://127.0.0.1:4173/?viewport=fold#/a/chats`
 - **A + Mobile + My Apps/Boards/Store:** `http://127.0.0.1:4173/?viewport=mobile#/a/apps`
 - **A + Mobile + command chips:** `http://127.0.0.1:4173/?viewport=mobile#/a/chats/agent:my:0`
@@ -53,16 +56,34 @@ npm start
 `Cmd/Ctrl K` — глобальный поиск по агентам, каналам, networks и Apps.
 `Escape` — сначала скрыть keyboard, затем закрыть modal/fullscreen App или вернуться к списку.
 
+## Упрощённая навигация A (после UX review)
+
+- **Один create-вход:** `New` в шапке списка (desktop/Fold) или floating New
+  (mobile) → New chat, Add agent, New channel, Networks, Manage channels/networks.
+- **Один поиск:** поле Search в шапке = `Cmd/Ctrl K`.
+- **Фильтр-чипы вместо select:** All · Unread · Agents · Channels и network-чип
+  (только если сетей больше одной). `Agents` заменяет вкладку Directory: сверху
+  строка Add agent, далее все агенты, даже без переписки.
+- **Разделы:** Chats · Activity · Apps (вкладки, mobile bottom nav, Fold rail).
+  `More` убран; Networks, UX notes и Reset demo — в profile/settings (`Fa`).
+- **Строки в 2 линии:** title + время + unread, preview. Network-тег только вне
+  My Network, `task`-тег у task-bound каналов, точка на аватаре = Working.
+  Автор канала — в Details.
+- **Диалог:** статус по-человечески (`Online`, `Working…`, `4 agents`), одна
+  кнопка ⓘ Details; Apps — в composer `+` (Files, Apps). Bubbles: свои справа.
+  Model chip только у локальных агентов; placeholder `Message <name>`.
+- Иконки — inline SVG (`currentColor`), у icon-only кнопок есть `aria-label`.
+
 ## Что можно кликнуть
 
-- **+ → Add agent:** агент автоматически попадает в `My Network`, без выбора
+- **New → Add agent** (или Chats → Agents → Add agent): агент автоматически попадает в `My Network`, без выбора
   Local/Network.
-- **+ → New chat:** Gmail-like compose с recipient chips и поиском агентов.
+- **New → New chat:** Gmail-like compose с recipient chips и поиском агентов.
   Без получателей — локальный Quick chat; один — существующий endless direct;
   несколько — новая группа. Можно смешивать local и network agents: внешние
   получают доступ только к этой группе, не ко всей `My Network`.
 - **Quick chat → Details:** Archive, Link to agent и Become agent.
-- **+ → Group agents / Create channel:** постоянная или task-bound группа.
+- **New → New channel:** постоянная или task-bound группа.
 - **Agent → Details → Create channel as agent:** канал создаёт сам агент.
 - **Agent → Details → New task:** задача запускается в контексте конкретного
   агента, а не из глобального Quick actions. Агент создаёт task-channel и по
@@ -75,21 +96,20 @@ npm start
   установкой в My Apps. `New app` создаёт custom app именно в My Apps. Можно
   создать board, открыть его и установить Calendar из Store. Запущенный App
   по-прежнему имеет side panel/fullscreen, Pin и явный Change context.
-- **Local agent composer:** кнопка текущей модели, mobile chips `Model: Auto`,
-  `Apps`, `New chat` без обязательного ввода `/`, плюс slash-подсказки для
-  клавиатурного сценария. Модель меняется только для текущего агента.
-- **Компактный `+` рядом с фильтром и Fold rail → New:** Create / manage —
-  New chat, New channel, Networks, Manage channels/networks. Networks предлагает
+- **Local agent composer:** кнопка текущей модели, mobile chips `Model: Auto`
+  и `Apps` без обязательного ввода `/`, плюс slash-подсказки `/model`, `/apps`,
+  `/new`. Модель меняется только для текущего локального агента.
+- **New → Networks / Manage networks:** Networks предлагает
   Create a network или Join a network по invite/code; оба действия не меняют
   default My Network.
 - **C · Inbox:** Approve, Retry, Finish, Read, Open source и Open task channel.
-- **Mobile:** floating `+` для quick actions, нижние разделы, один экран диалога,
+- **Mobile:** floating New, нижние разделы Chats/Activity/Apps, один экран диалога,
   один Back и отсутствие composer на экранах Apps/Directory/Inbox.
-- **Fold:** контент не заезжает под правый action rail; центральная полоса
+- **Fold:** контент не заезжает под правый navigation rail; центральная полоса
   перетаскивается и меняет ширину списка; Apps используют те же три раздела.
 
 Демо содержит **118 agent records, 65 channels, 6 networks и 14 quick chats**.
-В `More → Reset demo` всё возвращается к исходному состоянию.
+В `Fa (profile) → Reset demo` всё возвращается к исходному состоянию.
 
 ## UX-карты
 

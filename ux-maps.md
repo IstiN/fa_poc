@@ -216,43 +216,52 @@ Apps. Поэтому ни один вариант не должен показы
 
 ## Карта навигации
 
+После UX review навигация A упрощена: три основных раздела, один вход для
+создания и один вход для поиска.
+
 ```text
 Fa
+├── Шапка списка: [Fa profile] [Search ⌘K] [New]
+│   ├── Search — поле в шапке, открывает тот же глобальный поиск, что Cmd/Ctrl K
+│   ├── New (desktop/Fold) или floating New (mobile) — единственный create-вход:
+│   │   New chat · Add agent · New channel · Networks · Manage channels/networks
+│   └── Profile / settings — Networks, All agents, UX notes, Reset demo
 ├── Chats — стартовый раздел
-│   ├── Pinned
-│   ├── Unread / Running
-│   ├── Recent
-│   │   ├── Agent: Mail Reader
-│   │   ├── Channel: My Network / # release-260-audit
-│   │   ├── Channel: ai_conf / # public
-│   │   ├── Agent: Code Reviewer
-│   │   └── Quick chat: «Разобраться с DNS»
-│   └── Folders / filters
-│       ├── My Network — default agent home
-│       ├── istin-network
-│       ├── yoclip-studio
-│       ├── ai_conf
-│       ├── home-lab
-│       ├── client-acme
-│       └── Пользовательские папки
+│   ├── Filter chips: All · Unread · Agents · Channels · [All networks ▾]
+│   │   ├── All — Pinned + Recent (агенты, каналы, quick chats)
+│   │   ├── Unread — только непрочитанное
+│   │   ├── Agents — бывший Directory/Agents: строка «Add agent» сверху,
+│   │   │   затем все агенты, включая тех, с кем ещё нет переписки
+│   │   ├── Channels — все каналы, активные и Archived
+│   │   └── Network chip — показывается, только если сетей больше одной
+│   └── Строка = 2 линии: avatar(+working dot) · title [tag network|task] · time
+│                          preview · unread badge
 ├── Activity
 │   ├── Needs you
-│   ├── Mentions / unread
-│   └── Finished / failed tasks
-├── Directory — полный каталог, а не ежедневный список
-│   ├── Agents
-│   ├── Channels
-│   └── Networks
+│   ├── Running
+│   └── Results / Later
 ├── Apps
 │   ├── My Apps — installed / favorite / running
 │   ├── My Boards — personal widget layouts
 │   └── Widget Store — discover / install
-└── Settings
+└── Networks (не вкладка) — из New → Manage networks, Profile → Networks,
+    network chip → Manage networks и Details → Open <network>
 ```
+
+Network-тег в строке показывается только вне `My Network`, поэтому несколько
+`#general` различимы без шумной третьей строки. Автор канала перенесён в
+Details.
 
 ## Внутри постоянного агента
 
 ```text
+Header: [←] [avatar] Mail Reader / «Online» | «Working…»          [ⓘ Details]
+Channel header: #research-team / «4 agents» (+ «· Task», «· <network>»)
+Composer: [+ Attach: Files, Apps] [Message Mail Reader] [Model chip*] [Send]
+          * Model только для локальных агентов и quick chats; /model, /apps, /new
+            подсказываются при вводе «/»
+Messages: bubbles — свои справа, агента слева; системные события одной тихой строкой
+
 Agent: Mail Reader
 ├── Main conversation — непрерывный по умолчанию
 │   ├── Темы и точки в истории
@@ -275,8 +284,8 @@ Agent: Mail Reader
 ## Quick chat
 
 ```text
-Global +
-  → Quick chat
+New (header / mobile floating New)
+  → New chat без получателей → Quick chat
   → Первое сообщение
   → Автоматическое название по теме
   → Активный чат в Recent
@@ -295,8 +304,8 @@ Quick chats не засоряют постоянный список: неакт�
 
 - В `Recent` показываются только недавние, непрочитанные и работающие диалоги,
   а не все существующие контакты.
-- Все 32 агента `My Network` и 65 каналов доступны через Directory и глобальный
-  поиск.
+- Все агенты и 65 каналов доступны через чипы `Agents` / `Channels` и
+  глобальный поиск; отдельной вкладки Directory больше нет.
 - `Pinned` ограничен разумным коротким списком; остальное остаётся в папках.
 - `My Network` содержит домашних агентов и их постоянные команды; временные
   task-bound каналы показываются в Recent только пока активны.
@@ -310,8 +319,9 @@ Quick chats не засоряют постоянный список: неакт�
 ## Apps
 
 ```text
-Любой раздел
-  → Apps quick action
+Диалог → composer + (Attach) → Files / Apps
+Раздел Apps (вкладка, bottom nav, Fold rail)
+  → Apps
        ├── Favorites
        ├── Recent
        └── All apps
@@ -325,12 +335,16 @@ Quick chats не засоряют постоянный список: неакт�
 
 ## Mobile
 
-- Основные разделы: **Chats / Activity / Apps / More**.
-- Directory, networks и settings находятся в More и через поиск.
+- Основные разделы: **Chats / Activity / Apps**. `More` удалён: Networks,
+  UX notes и Reset demo живут в profile/settings (`Fa` в шапке).
+- Шапка списка одна: `Fa` · заголовок `Chats` · поле Search; ниже чипы фильтров.
+  Create — только floating New (FAB), без дублирующей кнопки в шапке.
 - Диалог — отдельный fullscreen-маршрут: назад ведёт ровно на один уровень.
 - Переключателя Local/Network нет; network — фильтр в списке Chats.
-- `+` открывает короткий список: Quick chat, New agent, Group agents / Create
-  channel, Open app, New task. Новый агент сразу попадает в `My Network`.
+- Floating New открывает: New chat, Add agent, New channel, Networks, Manage.
+  New task — в Details агента. Новый агент сразу попадает в `My Network`.
+- Чипы над composer контекстные: `Model: Auto` только у локальных агентов,
+  `Apps` всегда; `New chat` внутри диалога не показывается.
 - Apps открываются fullscreen; Running apps доступны через Apps и Activity.
 - Composer существует только внутри диалога, а не на экранах каталога и Apps.
 

@@ -261,15 +261,14 @@ export function getMessages(data, conversationId) {
   const { kind, item } = found;
   if (kind === 'agent') {
     data.messages[conversationId] = [
-      { from: 'system', text: `Persistent agent · ${networkById(data, item.networkId).name}` },
+      { from: 'system', text: `Endless conversation · ${networkById(data, item.networkId).name}` },
       { from: 'agent', text: `${item.name} is online. This is the same endless conversation.` },
       { from: 'user', text: 'Continue from where we stopped.' },
       { from: 'agent', text: 'Context restored. No new session was created.' },
     ];
   } else if (kind === 'channel') {
     data.messages[conversationId] = [
-      { from: 'system', text: `${item.creatorName} created this ${item.taskBound ? 'task-bound' : 'persistent'} channel` },
-      { from: 'system', text: `${item.memberIds.length} agent members · ${item.purpose}` },
+      { from: 'system', text: `${item.creatorName} created this channel · ${item.memberIds.length} agents${item.taskBound ? ' · task' : ''}` },
       { from: 'agent', text: 'The group is ready. Share the next step here.' },
     ];
   } else {
@@ -527,13 +526,12 @@ export function createChannel(data, {
   };
   touch(data, channel);
   data.channels.push(channel);
+  const external = channel.externalMemberIds.length
+    ? ` · ${channel.externalMemberIds.length} external, access is limited to this group, not ${network.name}`
+    : '';
   data.messages[channel.id] = [
-    { from: 'system', text: `${channel.creatorName} created #${channel.name} · ${channel.purpose}` },
-    { from: 'system', text: `${channel.memberIds.length} agent members · ${network.name}` },
+    { from: 'system', text: `${channel.creatorName} created #${channel.name} · ${channel.memberIds.length} agents · ${network.name}${external}` },
   ];
-  if (channel.externalMemberIds.length) {
-    data.messages[channel.id].push({ from: 'system', text: `${channel.externalMemberIds.length} external member(s) · access is limited to this group, not ${network.name}` });
-  }
   return channel;
 }
 
@@ -723,4 +721,111 @@ export function searchAll(data, query) {
   return results
     .sort((left, right) => rank(left) - rank(right) || left.title.localeCompare(right.title))
     .slice(0, 40);
+}
+
+const LIST_FILTERS = [['all', 'All'], ['unread', 'Unread'], ['agents', 'Agents'], ['channels', 'Channels']];
+const STATUS_LABELS = { running: 'Working…', online: 'Online', offline: 'Offline' };
+
+function conversationNetworkId(found) {
+  return found.kind === 'quick' ? MY_NETWORK_ID : found.item.networkId;
+}
+
+function byPinnedThenUpdated(left, right) {
+  return Number(right.item.pinned) - Number(left.item.pinned) || right.item.updated - left.item.updated;
+}
+
+export function listFilters(data, { filter = 'all', folder = 'all' } = {}) {
+  const chips = LIST_FILTERS.map(([id, label]) => ({ id, label, active: filter === id }));
+  const network = data.networks.length > 1
+    ? { value: folder, label: folder === 'all' ? 'All networks' : networkById(data, folder)?.name ?? 'All networks' }
+    : null;
+  return { chips, network };
+}
+
+export function filterConversations(data, { filter = 'all', folder = 'all' } = {}) {
+  const inFolder = (found) => folder === 'all' || conversationNetworkId(found) === folder;
+  const wrap = (kind) => (item) => ({ kind, item });
+  const sections = [];
+  const push = (label, items) => { if (items.length) sections.push({ label, items }); };
+  if (filter === 'agents') {
+    const agents = data.agents.map(wrap('agent')).filter(inFolder).sort(byPinnedThenUpdated);
+    push('Recent', agents.filter(({ item }) => item.recent || item.pinned));
+    push('All agents', agents.filter(({ item }) => !item.recent && !item.pinned).sort((left, right) => left.item.name.localeCompare(right.item.name)));
+    return sections;
+  }
+  if (filter === 'channels') {
+    const channels = data.channels.map(wrap('channel')).filter(inFolder).sort(byPinnedThenUpdated);
+    push('Channels', channels.filter(({ item }) => !item.archived));
+    push('Archived', channels.filter(({ item }) => item.archived));
+    return sections;
+  }
+  if (filter === 'unread') {
+    const unread = [
+      ...data.agents.map(wrap('agent')),
+      ...data.channels.filter((item) => !item.archived).map(wrap('channel')),
+      ...data.quickChats.filter((item) => !item.archived).map(wrap('quick')),
+    ].filter((found) => found.item.unread > 0 && inFolder(found)).sort(byPinnedThenUpdated);
+    push('Unread', unread);
+    return sections;
+  }
+  const items = [
+    ...data.agents.filter((item) => item.recent).map(wrap('agent')),
+    ...data.channels.filter((item) => item.recent && !item.archived).map(wrap('channel')),
+    ...data.quickChats.filter((item) => item.recent && !item.archived).map(wrap('quick')),
+  ].filter(inFolder).sort(byPinnedThenUpdated);
+  push('Pinned', items.filter(({ item }) => item.pinned));
+  push('Recent', items.filter(({ item }) => !item.pinned));
+  return sections;
+}
+
+export function relativeTime(updated, now) {
+  const diff = now - updated;
+  if (diff <= 5) return 'now';
+  if (diff < 60) return `${diff}m`;
+  if (diff < 1440) return `${Math.floor(diff / 60)}h`;
+  return `${Math.floor(diff / 1440)}d`;
+}
+
+export function listClock(data) {
+  const all = [...data.agents, ...data.channels, ...data.quickChats].map((item) => item.updated ?? 0);
+  return Math.max(data.clock, ...all) + 2;
+}
+
+function isWorking(data, found) {
+  if (found.kind === 'agent') return found.item.status === 'running';
+  if (found.kind === 'channel') return data.events.some((event) => event.channelId === found.item.id && event.status === 'running');
+  return false;
+}
+
+export function rowMeta(data, found, now = listClock(data)) {
+  const { kind, item } = found;
+  const networkId = conversationNetworkId(found);
+  const title = kind === 'channel' ? `#${item.name}` : item.name ?? item.title;
+  return {
+    kind,
+    title,
+    avatar: kind === 'channel' ? '#' : kind === 'quick' ? 'Q' : (item.name.trim()[0] ?? 'A').toLocaleUpperCase(),
+    preview: item.last ?? '',
+    time: relativeTime(item.updated ?? now, now),
+    unread: item.unread ?? 0,
+    networkTag: networkId === MY_NETWORK_ID ? null : networkById(data, networkId)?.name ?? null,
+    taskTag: kind === 'channel' && Boolean(item.taskBound),
+    archived: Boolean(item.archived),
+    working: isWorking(data, found),
+  };
+}
+
+export function humanStatus(data, found) {
+  const { kind, item } = found;
+  if (kind === 'quick') return 'Quick chat';
+  const remote = item.networkId === MY_NETWORK_ID ? '' : ` · ${networkById(data, item.networkId)?.name ?? 'Other network'}`;
+  if (kind === 'agent') return `${STATUS_LABELS[item.status] ?? 'Online'}${remote}`;
+  const count = item.memberIds.length;
+  return `${count} agent${count === 1 ? '' : 's'}${item.taskBound ? ' · Task' : ''}${item.archived ? ' · Archived' : ''}${remote}`;
+}
+
+export function isLocalConversation(found) {
+  if (!found) return false;
+  if (found.kind === 'quick') return true;
+  return found.kind === 'agent' && found.item.networkId === MY_NETWORK_ID;
 }

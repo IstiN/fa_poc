@@ -19,11 +19,17 @@ import {
   createNetwork,
   createQuickChat,
   findConversation,
+  filterConversations,
   getMessages,
+  humanStatus,
+  isLocalConversation,
   installWidget,
   joinNetwork,
   linkQuickChatToAgent,
+  listFilters,
+  relativeTime,
   requestCrossNetworkInvite,
+  rowMeta,
   searchAll,
   sendMessage,
 } from '../model.js';
@@ -280,4 +286,93 @@ test('global search covers agents, channels, networks and apps', () => {
   assert.ok(searchAll(data, 'public').some((result) => result.type === 'channel'));
   assert.ok(searchAll(data, 'My Network').some((result) => result.type === 'network'));
   assert.ok(searchAll(data, 'Files').some((result) => result.type === 'app'));
+});
+
+test('listFilters exposes compact chips and a network chip only with several networks', () => {
+  const data = createDemoData();
+  const filters = listFilters(data, { filter: 'all', folder: 'all' });
+  assert.deepEqual(filters.chips.map((chip) => chip.id), ['all', 'unread', 'agents', 'channels']);
+  assert.equal(filters.chips.find((chip) => chip.active).id, 'all');
+  assert.equal(filters.network.label, 'All networks');
+  assert.equal(listFilters(data, { filter: 'agents', folder: MY_NETWORK_ID }).network.label, 'My Network');
+  assert.equal(listFilters(data, { filter: 'agents', folder: 'all' }).chips.find((chip) => chip.active).id, 'agents');
+  const empty = createEmptyPreviewData(data);
+  assert.equal(listFilters(empty, { filter: 'all', folder: 'all' }).network, null);
+});
+
+test('filterConversations folds the directory into Agents and Channels filters', () => {
+  const data = createDemoData();
+  const all = filterConversations(data, { filter: 'all', folder: 'all' });
+  assert.deepEqual(all.map((section) => section.label), ['Pinned', 'Recent']);
+  const agents = filterConversations(data, { filter: 'agents', folder: 'all' }).flatMap((section) => section.items);
+  assert.equal(agents.length, data.agents.length);
+  const silent = addAgent(data, { name: 'Silent Agent' });
+  data.messages[silent.id] = [];
+  silent.recent = false;
+  assert.ok(filterConversations(data, { filter: 'agents', folder: MY_NETWORK_ID }).flatMap((section) => section.items).some(({ item }) => item.id === silent.id));
+  const channels = filterConversations(data, { filter: 'channels', folder: MY_NETWORK_ID });
+  assert.ok(channels.some((section) => section.label === 'Archived'));
+  assert.ok(channels.flatMap((section) => section.items).every(({ kind, item }) => kind === 'channel' && item.networkId === MY_NETWORK_ID));
+  const unread = filterConversations(data, { filter: 'unread', folder: 'all' }).flatMap((section) => section.items);
+  assert.ok(unread.length > 0);
+  assert.ok(unread.every(({ item }) => item.unread > 0));
+});
+
+test('rowMeta keeps rows to two lines and tags only non-default networks', () => {
+  const data = createDemoData();
+  const now = 1000;
+  const home = rowMeta(data, findConversation(data, 'channel:my:0'), now);
+  assert.equal(home.title, '#general');
+  assert.equal(home.networkTag, null);
+  const remote = rowMeta(data, findConversation(data, 'channel:istin-network:0'), now);
+  assert.equal(remote.networkTag, 'istin-network');
+  const task = rowMeta(data, findConversation(data, 'channel:my:2'), now);
+  assert.equal(task.taskTag, true);
+  assert.equal(task.working, true);
+  const runningAgent = rowMeta(data, findConversation(data, 'agent:my:0'), now);
+  assert.equal(runningAgent.working, true);
+  assert.equal(runningAgent.avatar, 'F');
+  assert.equal(rowMeta(data, findConversation(data, 'agent:my:1'), now).working, false);
+  assert.equal(typeof runningAgent.time, 'string');
+  assert.ok(!('creator' in home));
+});
+
+test('relativeTime renders short human labels', () => {
+  assert.equal(relativeTime(1000, 1000), 'now');
+  assert.equal(relativeTime(1005, 1000), 'now');
+  assert.equal(relativeTime(990, 1000), '10m');
+  assert.equal(relativeTime(880, 1000), '2h');
+  assert.equal(relativeTime(1000 - 3000, 1000), '2d');
+});
+
+test('humanStatus replaces jargon with human status', () => {
+  const data = createDemoData();
+  assert.equal(humanStatus(data, findConversation(data, 'agent:my:0')), 'Working…');
+  assert.equal(humanStatus(data, findConversation(data, 'agent:my:1')), 'Online');
+  assert.equal(humanStatus(data, findConversation(data, 'agent:my:3')), 'Offline');
+  assert.equal(humanStatus(data, findConversation(data, 'channel:my:1')), '4 agents');
+  assert.equal(humanStatus(data, findConversation(data, 'channel:my:2')), '4 agents · Task');
+  assert.equal(humanStatus(data, findConversation(data, 'channel:istin-network:0')), '3 agents · istin-network');
+  assert.equal(humanStatus(data, findConversation(data, 'agent:ai-conf:1')), 'Online · ai_conf');
+  assert.equal(humanStatus(data, findConversation(data, 'quick:0')), 'Quick chat');
+  for (const id of ['agent:my:0', 'channel:my:1', 'quick:0']) {
+    assert.doesNotMatch(humanStatus(data, findConversation(data, id)), /persistent/i);
+  }
+});
+
+test('model choice is offered only for local conversations', () => {
+  const data = createDemoData();
+  assert.equal(isLocalConversation(findConversation(data, 'agent:my:0')), true);
+  assert.equal(isLocalConversation(findConversation(data, 'quick:0')), true);
+  assert.equal(isLocalConversation(findConversation(data, 'agent:ai-conf:1')), false);
+  assert.equal(isLocalConversation(findConversation(data, 'channel:my:1')), false);
+});
+
+test('channel intro is one quiet system line', () => {
+  const data = createDemoData();
+  const system = getMessages(data, 'channel:my:1').filter((message) => message.from === 'system');
+  assert.equal(system.length, 1);
+  assert.match(system[0].text, /Researcher created this channel · 4 agents/);
+  const created = createChannel(data, { name: 'solo-line', memberIds: ['agent:my:1', 'agent:my:2'] });
+  assert.equal(data.messages[created.id].filter((message) => message.from === 'system').length, 1);
 });

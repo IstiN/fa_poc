@@ -148,8 +148,21 @@ async function screenshot(name) {
 }
 
 async function openQuickAction(action) {
-  await click('[data-action="quick-actions"]');
+  await click('.new-button, .quick-fab');
   await click(`.modal [data-action="${action}"]`);
+}
+
+async function count(selector) {
+  return evaluate(`[...document.querySelectorAll(${JSON.stringify(selector)})].filter((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
+  }).length`);
+}
+
+async function assertNoHorizontalOverflow(selector, label) {
+  const overflow = await evaluate(`[...document.querySelectorAll(${JSON.stringify(selector)})].filter((element) => element.scrollWidth > element.clientWidth + 1 && getComputedStyle(element).overflowX === 'visible').map((element) => element.className)`);
+  assert.deepEqual(overflow, [], `${label}: horizontal overflow`);
 }
 
 async function openAgentTask(agentId = 'agent:my:0') {
@@ -168,10 +181,46 @@ try {
   await cdp('Page.navigate', { url: `${baseUrl}/#/a/chats` });
   await waitFor(() => evaluate(`Boolean(${visible('.shell[data-variant="a"]')})`), 'variant A render');
   assert.match(await text('.content-head h1'), /Fa/);
+  // One New entry, one Search affordance, filter chips instead of a hidden select.
+  assert.equal(await count('[data-action="chat-create-menu"]'), 1, 'Exactly one visible create entry on desktop');
+  assert.equal(await count('.sidebar [data-action="command"]'), 1, 'Exactly one visible search affordance');
+  assert.equal(await count('[data-action="quick-actions"]'), 0);
+  assert.equal(await evaluate('Boolean(document.querySelector(\'[data-change="folder"]\'))'), false);
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.section-tabs button')].map((button) => button.textContent)`), ['Chats', 'Activity', 'Apps']);
+  assert.equal(await count('.content-head [data-action="quick-apps"]'), 0, 'Apps moved out of the conversation header');
+  assert.equal(await count('.content-head [data-action="conversation-details"]'), 1);
+  assert.match(await text('.content-head .subtitle'), /Working…/);
+  assert.equal(await evaluate(`document.querySelector('[data-chat-input]').placeholder`), 'Message Fa');
+  assert.equal(await evaluate(`document.querySelector('[data-prototype-link="styleguide"]').getAttribute('href')`), 'styleguide.html');
+  assert.equal(await count('.conversation-row .item-meta'), 0, 'Rows are two lines');
+  assert.ok(await count('.conversation-row .row-tag') > 0, 'Non-default networks are tagged');
+  await assertNoHorizontalOverflow('.sidebar-head, .filter-chips, .content-head, .composer', 'desktop A');
   await screenshot('a-desktop.png');
 
-  // Global quick actions stay focused; tasks belong to an agent and Apps has its own surface.
-  await click('[data-action="quick-actions"]');
+  // Filter chips are keyboard-reachable buttons; Agents replaces the old Directory tab.
+  await evaluate(`document.querySelector('[data-action="list-filter"][data-filter="unread"]').focus()`);
+  assert.equal(await evaluate('document.activeElement.dataset.filter'), 'unread');
+  await click('[data-action="list-filter"][data-filter="unread"]');
+  assert.equal(await evaluate(`document.querySelector('[data-filter="unread"]').getAttribute('aria-pressed')`), 'true');
+  await click('[data-action="list-filter"][data-filter="agents"]');
+  await waitFor(() => evaluate(`Boolean(${visible('.add-row [data-action="new-agent"]')})`), 'Agents filter with Add agent row');
+  assert.equal(await count('[data-testid="conversation-list"] .conversation-row'), 118);
+  await click('[data-action="network-filter"]');
+  await click('.modal [data-action="select-folder"][data-id="istin-network"]');
+  assert.equal(await count('[data-testid="conversation-list"] .conversation-row'), 18);
+  assert.match(await text('.network-chip'), /istin-network/);
+  await click('[data-action="list-filter"][data-filter="channels"]');
+  assert.match(await text('[data-testid="conversation-list"]'), /Archived/);
+  await click('[data-action="network-filter"]');
+  await click('.modal [data-action="select-folder"][data-id="all"]');
+  await click('[data-action="list-filter"][data-filter="all"]');
+
+  // Global New menu stays focused; tasks belong to an agent and Apps has its own surface.
+  await click('.new-button');
+  assert.match(await text('.modal'), /New chat/);
+  assert.match(await text('.modal'), /Add agent/);
+  assert.match(await text('.modal'), /New channel/);
+  assert.match(await text('.modal'), /Manage networks/);
   assert.equal(await evaluate(`Boolean(${visible('.modal [data-action="new-task"]')})`), false);
   assert.equal(await evaluate(`Boolean(${visible('.modal [data-action="quick-apps"]')})`), false);
   await click('.modal [data-action="networks"]');
@@ -187,7 +236,7 @@ try {
   await setValue('.modal [name="purpose"]', 'Analyze release evidence');
   await click('.modal [data-form="new-agent"] button[type="submit"]');
   await waitFor(async () => (await text('.content-head h1')) === 'Release Analyst', 'new agent chat');
-  assert.match(await text('.content-head .subtitle'), /My Network/);
+  assert.equal(await text('.content-head .subtitle'), 'Online', 'Home agents show human status; My Network is implied');
   assert.match(await text('[data-testid="messages"]'), /automatically joined My Network/);
 
   // Compose with no recipients -> local Quick chat -> persistent agent with history.
@@ -197,7 +246,7 @@ try {
   await waitFor(async () => (await text('.content-head h1'))?.includes('DNS'), 'quick chat created');
   await click('.content-head [data-action="conversation-details"]');
   await click('.modal [data-action="convert-quick"]');
-  await waitFor(async () => (await text('.content-head .subtitle'))?.includes('persistent'), 'quick conversion');
+  await waitFor(async () => (await text('.content-head .subtitle')) === 'Online', 'quick conversion');
   assert.match(await text('[data-testid="messages"]'), /Проверить DNS/);
 
   // Gmail-like compose: one recipient reuses the direct endless agent.
@@ -209,6 +258,7 @@ try {
   assert.match(await text('[data-testid="messages"]'), /Direct compose without a new session/);
 
   // Slash tips and model selection apply to the current local agent.
+  assert.equal(await count('.composer .model-trigger'), 1, 'Model chip for local agents');
   await setValue('[data-chat-input]', '/');
   await waitFor(() => evaluate(`Boolean(${visible('[data-testid="command-tips"]')})`), 'slash command tips');
   await click('[data-action="chat-command"][data-command="model"]');
@@ -227,6 +277,7 @@ try {
   assert.match(await text('.new-chat-form'), /group only/);
   await click('.modal [data-form="new-chat"] button[type="submit"]');
   await waitFor(async () => (await text('.content-head h1')) === '#Mixed-browser-group', 'mixed compose group');
+  assert.equal(await count('.composer .model-trigger'), 0, 'No model chip in channels');
   assert.match(await text('[data-testid="messages"]'), /access is limited to this group/);
   assert.match(await text('[data-testid="messages"]'), /Review together across networks/);
 
@@ -270,8 +321,10 @@ try {
   await screenshot('channel-invite-cli.png');
   await click('.modal [data-action="close-modal"]');
 
-  // Apps: quick access, pin across chats, explicit context, fullscreen.
-  await click('.content-head [data-action="quick-apps"]');
+  // Apps: composer + attach menu (Files, Apps), pin across chats, explicit context, fullscreen.
+  await click('.composer [data-action="quick-apps"]');
+  assert.match(await text('.modal'), /Files/);
+  assert.match(await text('.modal'), /Apps/);
   await click('.modal [data-action="open-app"][data-id="app:files"]');
   await waitFor(() => evaluate(`Boolean(${visible('.app-panel')})`), 'app side panel');
   const contextBefore = await text('.app-panel .app-context button');
@@ -323,6 +376,8 @@ try {
   await cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: splitter.x + 45, y: splitter.y, button: 'left', buttons: 1 });
   await cdp('Input.dispatchMouseEvent', { type: 'mouseReleased', x: splitter.x + 45, y: splitter.y, button: 'left', clickCount: 1 });
   assert.ok(await evaluate(`document.querySelector('.sidebar').getBoundingClientRect().width`) > splitter.sidebar + 20, 'Fold splitter should resize the conversation pane');
+  assert.equal(await count('[data-action="chat-create-menu"]'), 1, 'Fold has one New entry');
+  await assertNoHorizontalOverflow('.sidebar-head, .filter-chips, .content-head, .composer', 'fold A');
   await screenshot('a-fold.png');
   await click('.fold-action-rail [data-section="apps"]');
   await waitFor(() => evaluate(`Boolean(${visible('.app-launcher-main .app-launcher-grid')})`), 'Fold app launcher');
@@ -333,6 +388,13 @@ try {
   await click('[data-prototype="viewport"][data-value="mobile"]');
   await waitFor(() => evaluate(`getComputedStyle(${visible('.bottom-nav')}).display === 'grid'`), 'mobile bottom nav');
   await waitFor(() => evaluate(`Boolean(${visible('.quick-fab')})`), 'mobile quick FAB');
+  assert.equal(await count('[data-action="chat-create-menu"]'), 1, 'Mobile has FAB only, no header New');
+  assert.deepEqual(await evaluate(`[...document.querySelectorAll('.bottom-nav button')].map((button) => button.textContent)`), ['Chats', 'Activity', 'Apps']);
+  assert.equal(await text('.sidebar-title'), 'Chats');
+  const listTop = await evaluate(`document.querySelector('[data-testid="conversation-list"]').getBoundingClientRect().top - document.querySelector('.sidebar').getBoundingClientRect().top`);
+  assert.ok(listTop <= 100, `Mobile list starts high enough (${listTop}px)`);
+  await assertNoHorizontalOverflow('.sidebar-head, .filter-chips', 'mobile A list');
+  await screenshot('a-mobile-list.png');
   await click('.quick-fab');
   await click('.modal [data-action="new-chat"]');
   await click('.modal [data-action="toggle-recipient"][data-id="agent:my:0"]');
@@ -343,6 +405,11 @@ try {
   await click('.sidebar [data-action="open-conversation"]');
   await waitFor(() => evaluate(`Boolean(${visible('.shell.detail-open .main')})`), 'mobile conversation');
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('.sidebar')).display`), 'none');
+  assert.equal(await count('.composer-chips [data-command="new"]'), 0, 'No New chat chip inside a chat');
+  assert.equal(await count('.composer-chips [data-command="model"]'), 0, 'No model chip in a channel');
+  assert.equal(await count('.composer-chips [data-command="apps"]'), 1);
+  assert.equal(await count('[data-testid="messages"] .message.system'), 1, 'One quiet system line');
+  await assertNoHorizontalOverflow('.content-head, .composer', 'mobile A chat');
   await screenshot('a-mobile-chat.png');
 
   // Channel invite remains usable as a mobile bottom sheet with QR and CLI tabs.
@@ -372,7 +439,7 @@ try {
   await screenshot('a-mobile-keyboard.png');
   await click('[data-action="keyboard-hide"]');
   assert.equal(await evaluate('Boolean(document.querySelector(".mobile-keyboard"))'), false);
-  await click('.content-head [data-action="quick-apps"]');
+  await click('.composer [data-action="quick-apps"]');
   await click('.modal [data-action="open-app"][data-id="app:preview"]');
   await waitFor(() => evaluate(`Boolean(${visible('.shell.app-mobile-open .app-panel')})`), 'mobile fullscreen app');
   await screenshot('apps-mobile.png');
@@ -398,7 +465,7 @@ try {
   assert.match(await text('.app-launcher-mobile'), /Calendar/);
   assert.match(await text('.app-launcher-mobile'), /Installed/);
   await click('.bottom-nav [data-section="chats"]');
-  await click('.create-menu-trigger');
+  await click('.quick-fab');
   await screenshot('mobile-create-menu.png');
   await click('.modal [data-action="networks"]');
   await click('.modal [data-action="new-network"]');
@@ -408,7 +475,7 @@ try {
   assert.match(await text('.content-scroll'), /Additional network/);
   await click('.content-head [data-action="back-list"]');
   await click('.bottom-nav [data-section="chats"]');
-  await click('.create-menu-trigger');
+  await click('.quick-fab');
   await click('.modal [data-action="networks"]');
   await click('.modal [data-action="join-network"]');
   assert.match(await evaluate(`document.querySelector('.modal [name="invite"]').value`), /DEMO-RESEARCH/);
@@ -416,8 +483,9 @@ try {
   await click('.modal [data-form="join-network"] button[type="submit"]');
   await waitFor(async () => (await text('.content-head h1')) === 'Research Lab', 'join network with demo invite');
   await click('.content-head [data-action="back-list"]');
-  await click('.bottom-nav [data-section="more"]');
-  await click('[data-action="notes"]');
+  await click('.sidebar-head [data-action="settings"]');
+  assert.match(await text('.modal'), /Networks/);
+  await click('.modal [data-action="notes"]');
   await waitFor(() => evaluate(`Boolean(${visible('.modal')})`), 'mobile UX notes');
   await click('.modal [data-action="close-modal"]');
 
