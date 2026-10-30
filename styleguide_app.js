@@ -20,16 +20,16 @@ import {
   LOGO_NOTES,
 } from './styleguide_icons.js';
 
-const state = { direction: 'folio', mode: 'light', chosen: null };
+const state = { direction: 'porcelain', mode: 'light', chosen: null };
 const roleNames = Object.fromEntries(COLOR_ROLES.map(([key, name]) => [key, name]));
 const agentKeys = ['agent1', 'agent2', 'agent3', 'agent4', 'agent5', 'agent6'];
 const compareRows = {
-  folio: {
-    accent: 'Vermilion on warm paper',
-    type: 'Fraunces + Instrument Sans',
-    motion: 'Calm, short, no bounce',
-    bestFor: 'Long reading: research, writing, release notes',
-    risk: 'Serif display can feel literary rather than technical',
+  prism: {
+    accent: 'Electric vermilion on obsidian',
+    type: 'Space Grotesk + Inter',
+    motion: 'Snappy, electric, zero drag',
+    bestFor: 'Next-gen agent workflows, bold tech products, high-energy teams',
+    risk: 'High chromatic energy — not for conservative corporate apps',
   },
   graphite: {
     accent: 'One sodium-amber signal',
@@ -218,7 +218,7 @@ function renderCompare() {
     return `<tr${id === state.direction ? ' class="is-current"' : ''}><td><b>${d.name}</b>${id === state.direction ? '<span class="tag">viewing</span>' : ''}</td><td>${d.tagline}</td><td>${c.accent}</td><td>${c.type}</td><td>${c.motion}</td><td>${c.bestFor}</td><td>${c.risk}</td></tr>`;
   }).join('');
   return `<header class="sg-head"><h2 class="sg-h2"><span class="sg-h2__num">07</span>Compare &amp; choose</h2>
-    <p class="sg-lede">Recommended: <b>Porcelain</b> for the mass-market messenger — it is the most tactile and scales best to a phone-first audience. Choose <b>Folio</b> if Fa's core value is long-form reading, or <b>Graphite</b> for an operator console.</p></header>
+    <p class="sg-lede">Recommended: <b>Porcelain</b> for the mass-market messenger — it is the most tactile and scales best to a phone-first audience. Choose <b>Prism</b> for a bold, distinctive high-energy look, or <b>Graphite</b> for an operator console.</p></header>
     <div class="table-wrap"><table class="sg-table sg-table--compare"><thead><tr><th>Direction</th><th>Personality</th><th>Accent</th><th>Type</th><th>Motion</th><th>Best for</th><th>Risk</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -276,7 +276,7 @@ function init() {
   state.chosen = localStorage.getItem(STORAGE_KEY);
   const fromHash = parseHash(location.hash);
   const storedChoice = state.chosen && DIRECTIONS[state.chosen] ? state.chosen : null;
-  apply({ direction: fromHash.direction || storedChoice || 'folio', mode: fromHash.mode || 'light' }, false);
+  apply({ direction: fromHash.direction || storedChoice || 'porcelain', mode: fromHash.mode || 'light' }, false);
   history.replaceState(null, '', buildHash(state.direction, state.mode));
 
   document.addEventListener('click', (event) => {

@@ -1,89 +1,89 @@
 /* Fa 2.0 styleguide — tokens per [data-direction][data-mode]. Generated values mirror DIRECTIONS in styleguide.js. */
 
-/* ---------- Folio ---------- */
-[data-direction="folio"] {
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-ui: 'Instrument Sans', system-ui, sans-serif;
+/* ---------- Prism ---------- */
+[data-direction="prism"] {
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --r-xs: 4px;
+  --r-xs: 3px;
   --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 14px;
-  --r-xl: 20px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
   --r-pill: 999px;
-  --dur-fast: 140ms;
-  --ease-fast: cubic-bezier(0.33, 1, 0.68, 1);
-  --dur-base: 220ms;
-  --ease-base: cubic-bezier(0.33, 1, 0.68, 1);
-  --dur-emph: 320ms;
-  --ease-emph: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-spring: 300ms;
-  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --ease-fast: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-base: 200ms;
+  --ease-base: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-emph: 280ms;
+  --ease-emph: cubic-bezier(0.25, 1, 0.5, 1);
+  --dur-spring: 240ms;
+  --ease-spring: cubic-bezier(0.18, 0.89, 0.32, 1.28);
   --icon-stroke: 1.5;
   --icon-cap: round;
   --icon-join: round;
-  --t-display: 500 44px/48px var(--font-display);
-  --ls-display: -0.02em;
-  --t-title: 500 28px/34px var(--font-display);
-  --ls-title: -0.01em;
-  --t-headline: 600 19px/26px var(--font-ui);
-  --ls-headline: -0.005em;
-  --t-body: 400 16px/24px var(--font-ui);
+  --t-display: 700 42px/46px var(--font-display);
+  --ls-display: -0.03em;
+  --t-title: 600 26px/32px var(--font-display);
+  --ls-title: -0.02em;
+  --t-headline: 600 18px/24px var(--font-ui);
+  --ls-headline: -0.01em;
+  --t-body: 400 15px/22px var(--font-ui);
   --ls-body: 0em;
-  --t-label: 500 14px/20px var(--font-ui);
-  --ls-label: 0.005em;
-  --t-caption: 500 12.5px/16px var(--font-ui);
+  --t-label: 600 13px/18px var(--font-ui);
+  --ls-label: 0.01em;
+  --t-caption: 500 12px/16px var(--font-ui);
   --ls-caption: 0.01em;
   --t-mono: 400 13px/20px var(--font-mono);
   --ls-mono: 0em;
 }
-[data-direction="folio"][data-mode="light"] {
-  color-scheme: light;
-  --bg: #F5F0E6;
-  --surface-1: #FBF8F2;
-  --surface-2: #FFFDF9;
-  --surface-3: #ECE4D6;
-  --ink-1: #1D1A16;
-  --ink-2: #4A443B;
-  --ink-3: #655D51;
-  --hairline: #DCD2C1;
-  --accent: #B3361B;
-  --accent-ink: #FFF8F1;
-  --accent-soft: #F4DDD2;
-  --success: #2F6B3A;
-  --warn: #8A5A00;
-  --danger: #A3231B;
-  --info: #2B5877;
-  --agent-1: #A3462B;
-  --agent-2: #56692A;
-  --agent-3: #2C5F6E;
-  --agent-4: #7A476C;
-  --agent-5: #8C6516;
-  --agent-6: #3D4878;
-}
-[data-direction="folio"][data-mode="dark"] {
+[data-direction="prism"][data-mode="dark"] {
   color-scheme: dark;
-  --bg: #171513;
-  --surface-1: #1F1C19;
-  --surface-2: #272420;
-  --surface-3: #312C27;
-  --ink-1: #F2EBDD;
-  --ink-2: #CBC1B0;
-  --ink-3: #A89D8B;
-  --hairline: #3B352E;
-  --accent: #EC7A57;
-  --accent-ink: #1F0E07;
-  --accent-soft: #3B231A;
-  --success: #86BC91;
-  --warn: #E2B55A;
-  --danger: #F28A7B;
-  --info: #8DB9D9;
-  --agent-1: #E08A6C;
-  --agent-2: #A9BB6E;
-  --agent-3: #7DB4C2;
-  --agent-4: #C79ABB;
-  --agent-5: #D9B25E;
-  --agent-6: #9DA8DB;
+  --bg: #0A0B0E;
+  --surface-1: #12141A;
+  --surface-2: #191C24;
+  --surface-3: #1F232B;
+  --ink-1: #F2F4F8;
+  --ink-2: #A4ACB8;
+  --ink-3: #8890A0;
+  --hairline: #282D38;
+  --accent: #FF4400;
+  --accent-ink: #0A0B0E;
+  --accent-soft: #2A1408;
+  --success: #00E599;
+  --warn: #FFB020;
+  --danger: #FF3355;
+  --info: #3399FF;
+  --agent-1: #FF5500;
+  --agent-2: #00D4FF;
+  --agent-3: #00E599;
+  --agent-4: #B84DFF;
+  --agent-5: #FFB800;
+  --agent-6: #FF2A7A;
+}
+[data-direction="prism"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #F2F4F8;
+  --surface-1: #FFFFFF;
+  --surface-2: #E9ECF2;
+  --surface-3: #DEE2EC;
+  --ink-1: #0C0D12;
+  --ink-2: #454854;
+  --ink-3: #585B6A;
+  --hairline: #D2D6E2;
+  --accent: #D63400;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FFE6DC;
+  --success: #007A4D;
+  --warn: #8F5600;
+  --danger: #C41C38;
+  --info: #1762B8;
+  --agent-1: #C43800;
+  --agent-2: #007799;
+  --agent-3: #007A4D;
+  --agent-4: #7822B8;
+  --agent-5: #8F6B00;
+  --agent-6: #B81452;
 }
 
 /* ---------- Graphite ---------- */
@@ -259,11 +259,11 @@
 }
 
 /* ---------- per-direction flavour (non-colour) ---------- */
-[data-direction="folio"] { --press-scale: 0.985; --display-ls: -0.02em; --caption-transform: none; --row-gap: 0px; --bubble-r: 16px; }
+[data-direction="prism"] { --press-scale: 0.97; --display-ls: -0.03em; --caption-transform: none; --row-gap: 2px; --bubble-r: 12px; }
 [data-direction="graphite"] { --press-scale: 1; --display-ls: -0.025em; --caption-transform: uppercase; --row-gap: 0px; --bubble-r: 6px; }
 [data-direction="porcelain"] { --press-scale: 0.96; --display-ls: -0.03em; --caption-transform: none; --row-gap: 4px; --bubble-r: 20px; }
-[data-direction="folio"][data-mode="light"] { --shadow-float: 0 1px 0 rgba(60, 40, 10, 0.04), 0 18px 40px -18px rgba(60, 40, 10, 0.28); --scrim: rgba(29, 26, 22, 0.32); }
-[data-direction="folio"][data-mode="dark"] { --shadow-float: 0 18px 40px -16px rgba(0, 0, 0, 0.6); --scrim: rgba(0, 0, 0, 0.5); }
+[data-direction="prism"][data-mode="light"] { --shadow-float: 0 1px 2px rgba(12, 13, 18, 0.06), 0 12px 28px -12px rgba(12, 13, 18, 0.18); --scrim: rgba(12, 13, 18, 0.35); }
+[data-direction="prism"][data-mode="dark"] { --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 1px var(--hairline), 0 16px 36px -16px rgba(0, 0, 0, 0.8); --scrim: rgba(0, 0, 0, 0.7); }
 [data-direction="graphite"][data-mode="dark"] { --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px var(--hairline); --scrim: rgba(0, 0, 0, 0.6); }
 [data-direction="graphite"][data-mode="light"] { --shadow-float: 0 0 0 1px var(--hairline), 0 8px 20px -12px rgba(15, 17, 20, 0.25); --scrim: rgba(15, 17, 20, 0.3); }
 [data-direction="porcelain"][data-mode="light"] { --shadow-float: 0 24px 48px -24px rgba(18, 40, 60, 0.28), 0 2px 6px -2px rgba(18, 40, 60, 0.08); --scrim: rgba(18, 23, 28, 0.28); }

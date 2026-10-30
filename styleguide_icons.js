@@ -56,11 +56,12 @@ function svgOpen(size, label, className = '') {
 
 export function logoMark(direction, size = 64) {
   if (direction === 'graphite') {
-    return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <rect x="10" y="10" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M10 22h44M22 10v44" stroke="currentColor" stroke-width="1.4" opacity="0.62"/>
-      <rect x="27.5" y="27.5" width="9" height="9" fill="var(--accent)"/>
-    </svg>`;
+    // Prism (default)
+  return `${svgOpen(size, 'Fa logo', 'logo-mark')}
+    <polygon points="32,8 54,48 10,48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="32" cy="35" r="4.5" fill="var(--accent)"/>
+    <line x1="32" y1="8" x2="32" y2="24" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.6"/>
+  </svg>`;
   }
   if (direction === 'porcelain') {
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
@@ -110,7 +111,7 @@ export function wordmark(direction, width = 168) {
 }
 
 export const LOGO_NOTES = {
-  folio: 'A folded sheet on a 64 grid; the vermilion full stop is the only colour — the way the accent is used in the product.',
+  prism: 'An equilateral prism refracting into a hyper-accent core; geometry is bold and unmistakable at 16px.',
   graphite: 'A calibrated frame with centre crosshair; the amber cell marks the exact point that needs attention.',
   porcelain: 'A continuous ceramic pill; the lagoon dot is the living agent inside the vessel.',
 };

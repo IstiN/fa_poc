@@ -130,20 +130,20 @@ try {
   await cdp('Page.enable');
   await cdp('Runtime.enable');
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
-  await cdp('Page.navigate', { url: `${baseUrl}/styleguide.html#direction=folio&mode=light` });
+  await cdp('Page.navigate', { url: `${baseUrl}/styleguide.html#direction=porcelain&mode=light` });
   await waitFor(() => evaluate(`Boolean(${visible('.sg-hero h1')})`), 'styleguide render');
-  assert.equal(await evaluate('document.documentElement.dataset.direction'), 'folio');
+  assert.equal(await evaluate('document.documentElement.dataset.direction'), 'porcelain');
   assert.equal(await evaluate('document.documentElement.dataset.mode'), 'light');
-  assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), 'Folio');
+  assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), 'Porcelain');
   assert.equal(await evaluate('document.querySelector(".sg-back").getAttribute("href")'), 'index.html');
   assert.equal(await count('.sg-seg [data-direction-button]'), 3);
   assert.equal(await count('[data-section]'), 8);
 
   // Every direction and mode renders all sections without a JS exception.
-  for (const direction of ['graphite', 'porcelain', 'folio']) {
+  for (const direction of ['graphite', 'prism', 'porcelain']) {
     await click(`[data-direction-button="${direction}"]`);
     assert.equal(await evaluate('document.documentElement.dataset.direction'), direction);
-    const expectedName = { folio: 'Folio', graphite: 'Graphite', porcelain: 'Porcelain' }[direction];
+    const expectedName = { prism: 'Prism', graphite: 'Graphite', porcelain: 'Porcelain' }[direction];
     assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), expectedName);
     assert.equal(await count('[data-section]'), 8);
     assert.ok(await count('.swatch') >= 21, `${direction} palette swatches`);
@@ -165,7 +165,7 @@ try {
 
   // Choosing persists and confirms in a toast.
   await click('[data-role="choose"]');
-  assert.equal(await evaluate('localStorage.getItem("fa2.styleguide.choice")'), 'folio');
+  assert.equal(await evaluate('localStorage.getItem("fa2.styleguide.choice")'), 'porcelain');
   assert.ok(await evaluate(`Boolean(${visible('.sg-toast.is-visible')})`), 'choice toast');
 
   // Mobile width stays inside the viewport.
