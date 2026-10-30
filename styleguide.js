@@ -181,8 +181,56 @@ export const DIRECTIONS = {
       },
     },
   },
+  glass: {
+    id: 'glass',
+    name: 'Liquid Glass',
+    tagline: 'Apple-inspired liquid glass — frosted acrylic surfaces, refraction borders, luminous cyan aura.',
+    personality:
+      'The modern Apple visionOS / iOS aesthetic reimagined for an AI messenger: translucent frosted glass panels (backdrop-filter: blur(24px) saturate(1.8)), specular edge highlights, fluid spring physics, and a luminous oceanic cyan accent (#38BDF8). Light and color gently refract through conversation layers. SF-style typography with SF Pro / Inter display, Plus Jakarta Sans for UI, and DM Mono. High-tech, fluid and breathtakingly tactile without being blurry or illegible.',
+    notCheap:
+      'Not 2015-style flat blur soup: depth is achieved through layered acrylic refractive indices, crisp 1px specular gradient hairlines, and strict dark-mode contrast where every piece of text is guaranteed 5+:1 contrast against frosted glass.',
+    fonts: {
+      display: { family: 'Plus Jakarta Sans', css: "'Plus Jakarta Sans', system-ui, sans-serif", flutter: 'GoogleFonts.plusJakartaSans()' },
+      ui: { family: 'Plus Jakarta Sans', css: "'Plus Jakarta Sans', system-ui, sans-serif", flutter: 'GoogleFonts.plusJakartaSans()' },
+      mono: { family: 'DM Mono', css: "'DM Mono', ui-monospace, monospace", flutter: 'GoogleFonts.dmMono()' },
+    },
+    type: [
+      ['Display', 'display', 42, 48, 700, -0.03, 'Release 2.6.0 is ready'],
+      ['Title', 'display', 26, 32, 600, -0.02, '#release-260-audit'],
+      ['Headline', 'ui', 18, 24, 600, -0.01, 'Release Manager'],
+      ['Body', 'ui', 15, 23, 400, 0, 'I compared the changelog with merged PRs; two items are missing notes.'],
+      ['Label', 'ui', 13.5, 19, 600, 0.005, 'Approve · Deny · Open board'],
+      ['Caption', 'ui', 12, 16, 500, 0.01, 'My Network · 2 min ago'],
+      ['Mono', 'mono', 13, 20, 400, 0, 'fa agent join --channel release-260-audit'],
+    ],
+    radius: [['xs', 6], ['sm', 10], ['md', 16], ['lg', 22], ['xl', 30], ['pill', 999]],
+    icon: { stroke: 1.5, cap: 'round', join: 'round', note: '1.5 px, fluid rounded contours with smooth continuous curves.' },
+    motion: {
+      personality: 'Liquid and buoyant. Spring dynamics with subtle fluid inertia and glass refraction ripples.',
+      fast: [160, 'cubic-bezier(0.2, 1.2, 0.4, 1)', 'SpringDescription(mass: 1, stiffness: 500, damping: 28)'],
+      base: [260, 'cubic-bezier(0.2, 1.15, 0.4, 1)', 'SpringDescription(mass: 1, stiffness: 380, damping: 26)'],
+      emph: [400, 'cubic-bezier(0.18, 1, 0.32, 1)', 'Curves.easeOutQuart'],
+      spring: [340, 'cubic-bezier(0.2, 1.25, 0.4, 1)', 'SpringDescription(mass: 1, stiffness: 320, damping: 22) · fluid rebound'],
+    },
+    elevation: 'Translucent acrylic layering with backdrop blur, specular top-edge highlights (inset 0 1px 0 rgba(255,255,255,0.12)), and deep ambient refraction.',
+    modes: {
+      dark: {
+        bg: '#080A10', surface1: '#0F1320', surface2: '#161B2C', surface3: '#1E243A',
+        ink1: '#F0F4FC', ink2: '#9FB0D0', ink3: '#889ABE', hairline: '#222D46',
+        accent: '#38BDF8', accentInk: '#080A10', accentSoft: '#14263C',
+        success: '#34D399', warn: '#FBBF24', danger: '#F87171', info: '#60A5FA',
+        agent1: '#38BDF8', agent2: '#818CF8', agent3: '#34D399', agent4: '#F472B6', agent5: '#FBBF24', agent6: '#2DD4BF',
+      },
+      light: {
+        bg: '#F0F4F8', surface1: '#FFFFFF', surface2: '#E5ECF4', surface3: '#D6E0EC',
+        ink1: '#0B1322', ink2: '#3E4C66', ink3: '#505F7D', hairline: '#C4D2E4',
+        accent: '#0277BD', accentInk: '#FFFFFF', accentSoft: '#E1F1FB',
+        success: '#027A48', warn: '#B54708', danger: '#C42129', info: '#0E64B8',
+        agent1: '#0277BD', agent2: '#4F46E5', agent3: '#027A48', agent4: '#DB2777', agent5: '#B54708', agent6: '#0D9488',
+      },
+    },
+  },
 };
-
 export const DIRECTION_IDS = Object.keys(DIRECTIONS);
 
 // ---------- colour math (WCAG 2.x) ----------

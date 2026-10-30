@@ -14,7 +14,7 @@ import {
 import { ICONS, ICON_NAMES, appIcon, favicon, icon, logoMark, wordmark } from '../styleguide_icons.js';
 
 test('three complete visual directions exist', () => {
-  assert.equal(DIRECTION_IDS.length, 3);
+  assert.equal(DIRECTION_IDS.length, 4);
   for (const id of DIRECTION_IDS) {
     const direction = DIRECTIONS[id];
     assert.ok(direction.name);

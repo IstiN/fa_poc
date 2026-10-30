@@ -24,6 +24,13 @@ const state = { direction: 'porcelain', mode: 'dark', chosen: null };
 const roleNames = Object.fromEntries(COLOR_ROLES.map(([key, name]) => [key, name]));
 const agentKeys = ['agent1', 'agent2', 'agent3', 'agent4', 'agent5', 'agent6'];
 const compareRows = {
+  glass: {
+    accent: 'Luminous oceanic cyan with glass refraction',
+    type: 'Plus Jakarta Sans + DM Mono',
+    motion: 'Fluid, buoyant, spring-glass ripples',
+    bestFor: 'Apple-ecosystem lovers, visionOS aesthetic, tactile luxury',
+    risk: 'Backdrop blur requires hardware acceleration (easily handled in Flutter via BackdropFilter)',
+  },
   nebula: {
     accent: 'Luminous iris-violet on obsidian',
     type: 'Space Grotesk + Inter',
@@ -218,7 +225,7 @@ function renderCompare() {
     return `<tr${id === state.direction ? ' class="is-current"' : ''}><td><b>${d.name}</b>${id === state.direction ? '<span class="tag">viewing</span>' : ''}</td><td>${d.tagline}</td><td>${c.accent}</td><td>${c.type}</td><td>${c.motion}</td><td>${c.bestFor}</td><td>${c.risk}</td></tr>`;
   }).join('');
   return `<header class="sg-head"><h2 class="sg-h2"><span class="sg-h2__num">07</span>Compare &amp; choose</h2>
-    <p class="sg-lede">Recommended: <b>Porcelain</b> for the mass-market messenger — it is the most tactile and scales best to a phone-first audience. Choose <b>Nebula</b> for a calm, futuristic iris-glow without eye strain, or <b>Graphite</b> for an operator console.</p></header>
+    <p class="sg-lede">Recommended: <b>Porcelain</b> for the mass-market messenger — it is the most tactile and scales best to a phone-first audience. Choose <b>Liquid Glass</b> for Apple-grade frosted acrylic luxury, <b>Nebula</b> for night-time deep work, or <b>Graphite</b> for an operator console.</p></header>
     <div class="table-wrap"><table class="sg-table sg-table--compare"><thead><tr><th>Direction</th><th>Personality</th><th>Accent</th><th>Type</th><th>Motion</th><th>Best for</th><th>Risk</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 

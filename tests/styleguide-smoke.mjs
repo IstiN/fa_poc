@@ -136,14 +136,14 @@ try {
   assert.equal(await evaluate('document.documentElement.dataset.mode'), 'dark');
   assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), 'Porcelain');
   assert.equal(await evaluate('document.querySelector(".sg-back").getAttribute("href")'), 'index.html');
-  assert.equal(await count('.sg-seg [data-direction-button]'), 3);
+  assert.equal(await count('.sg-seg [data-direction-button]'), 4);
   assert.equal(await count('[data-section]'), 8);
 
   // Every direction and mode renders all sections without a JS exception.
-  for (const direction of ['graphite', 'nebula', 'porcelain']) {
+  for (const direction of ['graphite', 'nebula', 'porcelain', 'glass']) {
     await click(`[data-direction-button="${direction}"]`);
     assert.equal(await evaluate('document.documentElement.dataset.direction'), direction);
-    const expectedName = { nebula: 'Nebula', graphite: 'Graphite', porcelain: 'Porcelain' }[direction];
+    const expectedName = { nebula: 'Nebula', graphite: 'Graphite', porcelain: 'Porcelain', glass: 'Liquid Glass' }[direction];
     assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), expectedName);
     assert.equal(await count('[data-section]'), 8);
     assert.ok(await count('.swatch') >= 21, `${direction} palette swatches`);
@@ -165,7 +165,7 @@ try {
 
   // Choosing persists and confirms in a toast.
   await click('[data-role="choose"]');
-  assert.equal(await evaluate('localStorage.getItem("fa2.styleguide.choice")'), 'porcelain');
+  assert.equal(await evaluate('localStorage.getItem("fa2.styleguide.choice")'), 'glass');
   assert.ok(await evaluate(`Boolean(${visible('.sg-toast.is-visible')})`), 'choice toast');
 
   // Mobile width stays inside the viewport.

@@ -55,6 +55,13 @@ function svgOpen(size, label, className = '') {
 }
 
 export function logoMark(direction, size = 64) {
+    if (direction === 'glass') {
+    return `${svgOpen(size, 'Fa logo', 'logo-mark')}
+      <rect x="8" y="12" width="48" height="40" rx="16" fill="color-mix(in srgb, var(--accent) 15%, transparent)" stroke="currentColor" stroke-width="2"/>
+      <circle cx="24" cy="32" r="5" fill="var(--accent)"/>
+      <path d="M35 26h10M35 32h7M35 38h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+    </svg>`;
+  }
   if (direction === 'graphite') {
     // Nebula (default)
   return `${svgOpen(size, 'Fa logo', 'logo-mark')}
@@ -112,6 +119,7 @@ export function wordmark(direction, width = 168) {
 
 export const LOGO_NOTES = {
   nebula: 'An orbital ring with a calm iris-violet core; futuristic, focused and easy on the eyes.',
+  glass: 'A frosted pill frame with refraction core; fluid, Apple-inspired depth and luminous oceanic cyan.',
   graphite: 'A calibrated frame with centre crosshair; the amber cell marks the exact point that needs attention.',
   porcelain: 'A continuous ceramic pill; the lagoon dot is the living agent inside the vessel.',
 };

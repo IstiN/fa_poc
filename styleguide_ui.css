@@ -445,3 +445,61 @@
   color: var(--ink-2);
   border-bottom: 1px solid var(--hairline);
 }
+
+/* ---------- Liquid Glass specific styling (frosted acrylic) ---------- */
+[data-direction="glass"] .sg-card {
+  background: color-mix(in srgb, var(--surface-1) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid color-mix(in srgb, var(--hairline) 60%, rgba(255,255,255,0.1));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+[data-direction="glass"] .device__screen {
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, var(--bg) 70%);
+}
+[data-direction="glass"] .mini {
+  background: transparent;
+}
+[data-direction="glass"] .mini__thread .bubble--agent {
+  background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--hairline) 70%, rgba(255,255,255,0.12));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+[data-direction="glass"] .mini__thread .bubble--own {
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 80%, #1D4ED8) 100%);
+  color: var(--accent-ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 16px -2px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+[data-direction="glass"] .mini__composer {
+  background: color-mix(in srgb, var(--surface-2) 75%, transparent);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid color-mix(in srgb, var(--hairline) 75%, rgba(255,255,255,0.15));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+[data-direction="glass"] .bubble--agent {
+  background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--hairline) 70%, rgba(255,255,255,0.12));
+}
+[data-direction="glass"] .bubble--own {
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 80%, #1D4ED8) 100%);
+  color: var(--accent-ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 16px -2px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+[data-direction="glass"] .composer {
+  background: color-mix(in srgb, var(--surface-2) 75%, transparent);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid color-mix(in srgb, var(--hairline) 75%, rgba(255,255,255,0.15));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+[data-direction="glass"] .chip {
+  background: color-mix(in srgb, var(--surface-2) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--hairline) 70%, rgba(255,255,255,0.1));
+}
