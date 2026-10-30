@@ -36,7 +36,11 @@ npm start
   `return` скрывают её. Composer и mobile bottom-sheet остаются над клавиатурой.
 - **Empty** — non-destructive first-run preview: пустые Chats, Inbox, My Apps и
   My Boards. Повторное нажатие возвращает заполненное demo без потери его данных.
-- **Styleguide** — ссылка на `styleguide.html` (компоненты wireframe).
+- **Styleguide** — отдельная страница `styleguide.html`: три визуальных
+  направления (Folio, Graphite, Porcelain), light/dark, палитра с живым WCAG
+  расчётом, типографика, иконки и логотипы (только inline SVG), галерея
+  компонентов и воспроизводимые переходы с spec-строкой. Выбор направления
+  сохраняется через `Choose this direction`.
 
 Прямой вход в mobile-диалог сразу с keyboard:
 
@@ -52,6 +56,7 @@ npm start
 - **A + Mobile + My Apps/Boards/Store:** `http://127.0.0.1:4173/?viewport=mobile#/a/apps`
 - **A + Mobile + command chips:** `http://127.0.0.1:4173/?viewport=mobile#/a/chats/agent:my:0`
 - **A + Mobile + Empty:** `http://127.0.0.1:4173/?empty=1&viewport=mobile#/a/chats`
+- **Styleguide направления:** `styleguide.html#direction=folio|graphite|porcelain&mode=light|dark`
 
 `Cmd/Ctrl K` — глобальный поиск по агентам, каналам, networks и Apps.
 `Escape` — сначала скрыть keyboard, затем закрыть modal/fullscreen App или вернуться к списку.
@@ -122,15 +127,22 @@ npm start
 - `model.js` — демо-данные и чистые правила предметной области.
 - `views.js` — HTML-рендеринг экранов и modal flows.
 - `app.js` — маршрутизация, действия, состояние и localStorage preferences.
-- `tests/` — model/view tests и Chrome browser smoke.
+- `styleguide.html` + `styleguide.css` + `styleguide_ui.css` — страница трёх
+  визуальных направлений: tokens, typography, shape, иконки/логотипы,
+  компоненты и motion demos.
+- `styleguide.js` — чистые данные направлений и WCAG-математика (тестируется в Node).
+- `styleguide_icons.js` — hand-drawn inline SVG иконки и логотипы Fa.
+- `styleguide_app.js` — рендеринг и взаимодействие страницы styleguide.
+- `tests/` — model/view/styleguide tests, Chrome browser smoke и styleguide smoke.
 
 ## Проверка
 
 ```bash
 npm run check
 npm run test:browser
+npm run test:styleguide
 ```
 
-`test:browser` сам поднимает временный server и использует установленный
+`test:browser` и `test:styleguide` сами поднимают временный server и используют установленный
 Chrome/Chromium. Путь к браузеру можно переопределить через `CHROME_BIN`.
 Скрипт проходит основные A/C/mobile flows и сохраняет screenshots в `artifacts/`.

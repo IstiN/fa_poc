@@ -698,3 +698,24 @@ A и B можно проверить двумя наборами wireframes на
 После этого следующий артефакт — кликабельный серый SPA без визуального
 дизайна: desktop и mobile, реалистичный большой набор данных и все quick
 actions.
+
+## 8. Визуальные направления (styleguide)
+
+Серый wireframe не навязывает визуальный стиль. Отдельная страница
+`styleguide.html` показывает три полноценных направления для выбора:
+
+- **Folio** — editorial paper & ink: тёплая бумага, чернила, один vermilion
+  акцент, Fraunces + Instrument Sans. Для длинного чтения agent-результатов.
+- **Graphite** — precision instrument: dark-first графитовая шкала, hairlines,
+  IBM Plex Sans/Mono с tabular numbers, один amber signal. Для операторов и
+  параллельных запусков.
+- **Porcelain** — soft tactile: холодные керамические нейтрали, глубокий
+  lagoon teal, крупные радиусы и пружинные переходы. Для массового
+  phone-first messenger.
+
+Каждое направление содержит light/dark палитру с вычисляемым WCAG-контрастом,
+типовую шкалу, shape/spacing/elevation, 30 hand-drawn SVG-иконок, logo system
+(mark, app icon, favicon, wordmark), галерею компонентов со всеми состояниями и
+9 replayable motion-демо с указанием длительности, кривой и Flutter-аналога.
+Выбор сохраняется кнопкой `Choose this direction`; прямой вход —
+`styleguide.html#direction=<id>&mode=<light|dark>`.

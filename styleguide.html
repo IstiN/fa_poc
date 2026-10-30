@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-direction="folio" data-mode="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fa 2.0 · Visual directions styleguide</title>
+  <meta name="description" content="Three visual directions for Fa 2.0 — tokens, type, icons, components and motion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="styleguide.css">
+  <link rel="stylesheet" href="styleguide_ui.css">
+</head>
+<body>
+  <header class="sg-bar" role="banner">
+    <a class="sg-back" href="index.html">← Wireframes</a>
+    <div class="sg-bar__title"><span class="sg-bar__eyebrow">Fa 2.0</span> Visual directions</div>
+    <div class="sg-seg" role="radiogroup" aria-label="Direction" data-role="direction-switch"></div>
+    <button class="sg-mode" type="button" data-role="mode-toggle" aria-pressed="false">Dark</button>
+    <button class="sg-choose" type="button" data-role="choose">Choose this direction</button>
+  </header>
+  <main class="sg-main" id="sg-main">
+    <section class="sg-hero" id="hero" data-section="hero"></section>
+    <section class="sg-section" id="palette" data-section="palette"></section>
+    <section class="sg-section" id="type" data-section="type"></section>
+    <section class="sg-section" id="shape" data-section="shape"></section>
+    <section class="sg-section" id="icons" data-section="icons"></section>
+    <section class="sg-section" id="components" data-section="components"></section>
+    <section class="sg-section" id="motion" data-section="motion"></section>
+    <section class="sg-section" id="compare" data-section="compare"></section>
+  </main>
+  <div class="sg-toast-host" aria-live="polite" data-role="toast-host"></div>
+  <script type="module" src="styleguide_app.js"></script>
+</body>
+</html>
