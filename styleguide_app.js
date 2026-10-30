@@ -202,12 +202,116 @@ function renderComponents() {
     <div class="sg-card"><h4>Fields</h4><label class="field"><span>Search</span><div class="input">${icon('search', 18)}<input placeholder="Search agents, channels, apps"></div></label>
       <label class="field sg-mt"><span>Task</span><div class="input"><input value="Release 2.6.0 audit"></div></label>
       <label class="field is-error sg-mt"><span>Invite code</span><div class="input"><input value="fa join 12"><small>Invite expired 4 minutes ago.</small></div></label></div>
-    <div class="sg-card"><h4>Avatars &amp; badges</h4><div class="sg-row"><span class="avatar" style="--hue:${token('agent1')}"><b>R</b><i class="is-online"></i></span><span class="avatar" style="--hue:${token('agent2')}"><b>RM</b><i class="is-working"></i></span><span class="avatar" style="--hue:${token('agent3')}"><b>C</b><i class="is-offline"></i></span><span class="avatar avatar--group"><span style="--hue:${token('agent4')}">T</span><span style="--hue:${token('agent5')}">D</span><span style="--hue:${token('agent6')}">O</span></span><span class="badge">12</span><span class="badge badge--quiet">3</span><span class="tag">client-acme</span><span class="tag tag--task">task</span></div></div>
+    <div class="sg-card"><h4>Avatars &amp; Groups (Un-squished)</h4>
+      <div class="sg-row">
+        <span class="avatar" style="--hue:${token('agent1')}"><b>R</b><i class="is-online"></i></span>
+        <span class="avatar" style="--hue:${token('agent2')}"><b>RM</b><i class="is-working"></i></span>
+        <span class="avatar" style="--hue:${token('agent3')}"><b>C</b><i class="is-offline"></i></span>
+        <!-- Spacious group avatar stack: circles never overlap letters -->
+        <span class="avatar avatar--group" title="3 agents">
+          <span style="--hue:${token('agent4')}">T</span>
+          <span style="--hue:${token('agent5')}">D</span>
+          <span style="--hue:${token('agent6')}">O</span>
+        </span>
+        <span class="badge">12</span>
+        <span class="badge badge--quiet">3</span>
+        <span class="tag">client-acme</span>
+        <span class="tag tag--task">task</span>
+      </div>
+      <div class="sg-row sg-mt">
+        <div class="phase-row">
+          <span class="phase-badge is-thinking"><i></i> thinking...</span>
+          <span class="phase-badge is-tool"><i></i> exec bash</span>
+          <span class="phase-badge is-done"><i></i> completed</span>
+          <span class="phase-badge is-failed"><i></i> 429 quota</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sg-card"><h4>Dropdowns &amp; Selectors</h4>
+      <div class="sg-row" style="align-items:flex-start;">
+        <!-- Model Selector Dropdown -->
+        <div class="dropdown-demo">
+          <div class="dropdown-trigger">${icon('model', 18)} <span>Kimi K2.6 (JoinGonka)</span> ${icon('back', 14, '', 'style="transform:rotate(-90deg); margin-left:auto;"')}</div>
+          <div class="dropdown-menu-mock">
+            <button type="button" class="dropdown-item is-selected">${icon('check', 16)} Kimi K2.6 (JoinGonka)</button>
+            <button type="button" class="dropdown-item">${icon('model', 16)} Claude 3.5 Sonnet</button>
+            <button type="button" class="dropdown-item">${icon('model', 16)} GPT-4o (OpenAI)</button>
+          </div>
+        </div>
+        <!-- Channel Context Dropdown -->
+        <div class="dropdown-demo">
+          <div class="dropdown-trigger">${icon('channel', 18)} <span>#release-260-audit</span> ${icon('back', 14, '', 'style="transform:rotate(-90deg); margin-left:auto;"')}</div>
+          <div class="dropdown-menu-mock">
+            <button type="button" class="dropdown-item is-selected">${icon('check', 16)} #release-260-audit</button>
+            <button type="button" class="dropdown-item">${icon('channel', 16)} #general</button>
+            <button type="button" class="dropdown-item">${icon('network', 16)} istin-network</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="sg-card"><h4>Chat rows</h4><div class="chat-list"><div class="chat-row"><span class="avatar" style="--hue:${token('agent1')}"><b>R</b><i class="is-working"></i></span><span class="chat-row__body"><b>Researcher<time>14:02</time></b><small>Working · compared changelog with merged PRs</small></span><span class="badge">2</span></div><div class="chat-row"><span class="avatar avatar--group"><span style="--hue:${token('agent2')}">RM</span><span style="--hue:${token('agent4')}">T</span></span><span class="chat-row__body"><b>#general <span class="tag">istin-network</span><time>13:58</time></b><small>Test Runner: 42 tests green</small></span></div></div></div>
     <div class="sg-card"><h4>Messages &amp; cards</h4><div class="thread"><div class="bubble bubble--agent"><b>Researcher</b><p>Two changelog items are missing notes.</p></div><div class="bubble bubble--own"><p>Open a task channel and fix them.</p><time>14:03</time></div><div class="bubble bubble--system">Researcher created #release-260-audit · 4 agents</div><div class="tool-card">${icon('terminal', 18)}<div><b>bash · git log --oneline -12</b><small>12 commits · 1.2 s</small></div><span class="tag">done</span></div>
       <div class="approval-card"><div><b>Approval</b><p>Release Manager wants to invite Test Runner from client-acme.</p></div><div class="sg-row"><button class="btn btn--primary">Approve</button><button class="btn btn--danger">Deny</button></div></div></div></div>
     <div class="sg-card"><h4>Composer</h4><div class="composer">${icon('attach', 20, 'Attach')}<input placeholder="Message Researcher"><button class="model-chip">${icon('model', 16)} Auto</button><button class="send" aria-label="Send">${icon('send', 20)}</button></div><div class="sg-row sg-mt"><span class="chip">Model: Auto</span><span class="chip">${icon('apps', 16)} Apps</span></div></div>
-    <div class="sg-card"><h4>Apps &amp; boards</h4><div class="app-grid"><button class="app-tile">${icon('board', 24)}<b>Morning Board</b><small>3 widgets</small></button><button class="app-tile">${icon('file', 24)}<b>Export</b><small>PDF · 2.1 MB</small></button><button class="app-tile is-running">${icon('activity', 24)}<b>Release Audit</b><small>running</small></button><button class="app-tile is-add">${icon('plus', 24)}<b>New app</b></button></div></div>
+    <div class="sg-card"><h4>Apps &amp; Boards (Installed)</h4>
+      <div class="app-grid">
+        <button class="app-tile">${icon('board', 24)}<b>Morning Board</b><small>3 widgets · pinned</small></button>
+        <button class="app-tile">${icon('file', 24)}<b>Export Studio</b><small>PDF · 2.1 MB · ready</small></button>
+        <button class="app-tile is-running">${icon('activity', 24)}<b>Release Audit</b><small>running · channel-bound</small></button>
+        <button class="app-tile is-add">${icon('plus', 24)}<b>New custom app</b></button>
+      </div>
+    </div>
+
+    <div class="sg-card" style="grid-column: 1 / -1;">
+      <h4>Widget Store &amp; Runtime Catalog (fa_ui)</h4>
+      <div class="store-grid">
+        <div class="store-card">
+          <div class="store-card__header">
+            <div class="store-card__icon">${icon('board', 24)}</div>
+            <div class="store-card__meta">
+              <b>Calendar &amp; Tasks</b>
+              <small>v1.4.0 · flutter_js_widget_runtime</small>
+            </div>
+          </div>
+          <p>Two-way calendar widget syncing agent scheduled deliverables with local deadlines.</p>
+          <div class="store-card__footer">
+            <span class="store-card__price">Core Widget</span>
+            <button type="button" class="btn btn--primary store-card__btn">Install</button>
+          </div>
+        </div>
+
+        <div class="store-card">
+          <div class="store-card__header">
+            <div class="store-card__icon">${icon('activity', 24)}</div>
+            <div class="store-card__meta">
+              <b>Trajectory Visualizer</b>
+              <small>v2.1.0 · fa_ui</small>
+            </div>
+          </div>
+          <p>Live DAG timeline of agent tool execution, token throughput and decision checkpoints.</p>
+          <div class="store-card__footer">
+            <span class="store-card__price">System</span>
+            <button type="button" class="btn btn--secondary store-card__btn" disabled>Installed</button>
+          </div>
+        </div>
+
+        <div class="store-card">
+          <div class="store-card__header">
+            <div class="store-card__icon">${icon('terminal', 24)}</div>
+            <div class="store-card__meta">
+              <b>Terminal Logs &amp; PTY</b>
+              <small>v1.0.2 · LocalShell</small>
+            </div>
+          </div>
+          <p>Interactive ANSI streaming terminal card with background process supervision and stop hooks.</p>
+          <div class="store-card__footer">
+            <span class="store-card__price">Developer</span>
+            <button type="button" class="btn btn--primary store-card__btn">Install</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="sg-card"><h4>Sheets, toasts, empty, nav</h4><div class="sheet-mini"><header>Invite agent<code>QR · CLI</code></header><p>Scan on the phone, or run:</p><pre>fa agent join --channel release-260-audit</pre><footer><button class="btn btn--secondary">Copy</button><button class="btn btn--primary">Done</button></footer></div>
       <div class="toast">${icon('check', 20)} Invite approved<span>Undo</span></div>
       <div class="empty">${icon('agent', 40)}<b>No agents yet</b><p>Add your first agent; it joins My Network automatically.</p><button class="btn btn--primary">Add agent</button></div>
