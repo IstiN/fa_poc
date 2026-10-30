@@ -34,14 +34,14 @@ export const BODY_TEXT_TOKENS = ['ink1', 'ink2', 'ink3'];
 export const BACKGROUND_TOKENS = ['bg', 'surface1', 'surface2', 'surface3'];
 
 export const DIRECTIONS = {
-  prism: {
-    id: 'prism',
-    name: 'Prism',
-    tagline: 'Electric chromatic — deep space obsidian, vivid signal accents, bold geometric type.',
+  nebula: {
+    id: 'nebula',
+    name: 'Nebula',
+    tagline: 'Deep space obsidian — calm iris-violet glow, soft layered surfaces, zero eye strain.',
     personality:
-      'Deep space canvas with high-voltage chromatic accents: electric vermilion primary, neon mint for success, vivid amber for warnings, and hyper-cyan for info. Bold geometric typography set in Space Grotesk for display moments, Inter for crisp functional UI, and JetBrains Mono with tabular figures. Every agent identity has a saturated, unmistakable spectral hue. A messenger that feels alive, futuristic and uncompromisingly confident.',
+      'Engineered specifically for night-time and dark-first focus: deep obsidian canvas (#0B0C10) paired with a muted, luminous iris-violet accent (#9366FF) instead of eye-burning saturated orange. Displays set in Space Grotesk, UI in Inter, data in JetBrains Mono. Soft atmospheric surfaces with razor 1px borders, smooth pill chips, and calibrated low-fatigue agent hues. Creative and modern without screaming.',
     notCheap:
-      'Not rainbow soup: the canvas is pure deep obsidian (#0A0B0E), never washed-out gray. The electric accents are calibrated to exact mathematical contrast ratios (all body text >= 5:1, accents >= 4.8:1). Hairlines are razor-thin 1px obsidian borders. Geometry is confident with tight, sharp radii.',
+      'Avoiding harsh neon saturation: every accent and state color is softened to prevent eye strain during long sessions while maintaining strict WCAG AA contrast (all text >= 5:1). Dark surfaces layer naturally without blurry glows.',
     fonts: {
       display: { family: 'Space Grotesk', css: "'Space Grotesk', system-ui, sans-serif", flutter: 'GoogleFonts.spaceGrotesk()' },
       ui: { family: 'Inter', css: "'Inter', system-ui, sans-serif", flutter: 'GoogleFonts.inter()' },
@@ -56,30 +56,30 @@ export const DIRECTIONS = {
       ['Caption', 'ui', 12, 16, 500, 0.01, 'My Network · 2 min ago'],
       ['Mono', 'mono', 13, 20, 400, 0, 'fa agent join --channel release-260-audit'],
     ],
-    radius: [['xs', 3], ['sm', 6], ['md', 8], ['lg', 12], ['xl', 16], ['pill', 999]],
-    icon: { stroke: 1.5, cap: 'round', join: 'round', note: '1.5 px, crisp geometric lines with clean round terminals.' },
+    radius: [['xs', 4], ['sm', 8], ['md', 12], ['lg', 16], ['xl', 22], ['pill', 999]],
+    icon: { stroke: 1.5, cap: 'round', join: 'round', note: '1.5 px, clean rounded geometric lines with soft terminals.' },
     motion: {
-      personality: 'Snappy and electric. Instant response with zero drag, precise easing.',
-      fast: [120, 'cubic-bezier(0.16, 1, 0.3, 1)', 'Curves.easeOutExpo'],
-      base: [200, 'cubic-bezier(0.16, 1, 0.3, 1)', 'Curves.easeOutExpo'],
-      emph: [280, 'cubic-bezier(0.25, 1, 0.5, 1)', 'Curves.fastOutSlowIn'],
-      spring: [240, 'cubic-bezier(0.18, 0.89, 0.32, 1.28)', 'SpringDescription(mass: 1, stiffness: 600, damping: 28) · crisp snap'],
+      personality: 'Smooth and effortless. Atmospheric transitions with gentle deceleration.',
+      fast: [140, 'cubic-bezier(0.2, 0.9, 0.3, 1)', 'Curves.easeOutCubic'],
+      base: [220, 'cubic-bezier(0.2, 0.9, 0.3, 1)', 'Curves.easeOutCubic'],
+      emph: [320, 'cubic-bezier(0.25, 1, 0.4, 1)', 'Curves.fastOutSlowIn'],
+      spring: [280, 'cubic-bezier(0.2, 1.1, 0.4, 1)', 'SpringDescription(mass: 1, stiffness: 450, damping: 30)'],
     },
-    elevation: 'Surfaces step forward via obsidian tone ramps (#0A -> #12 -> #19) and subtle 1px luminous hairline borders. No blurry box-shadows.',
+    elevation: 'Obsidian depth hierarchy (#0B -> #11 -> #18) with subtle 1px luminous hairline borders and soft ambient depth.',
     modes: {
       dark: {
-        bg: '#0A0B0E', surface1: '#12141A', surface2: '#191C24', surface3: '#1F232B',
-        ink1: '#F2F4F8', ink2: '#A4ACB8', ink3: '#8890A0', hairline: '#282D38',
-        accent: '#FF4400', accentInk: '#0A0B0E', accentSoft: '#2A1408',
-        success: '#00E599', warn: '#FFB020', danger: '#FF3355', info: '#3399FF',
-        agent1: '#FF5500', agent2: '#00D4FF', agent3: '#00E599', agent4: '#B84DFF', agent5: '#FFB800', agent6: '#FF2A7A',
+        bg: '#0B0C10', surface1: '#11131A', surface2: '#181B24', surface3: '#1E212D',
+        ink1: '#F0F2F8', ink2: '#9BA3B8', ink3: '#8892A8', hairline: '#242838',
+        accent: '#9366FF', accentInk: '#0B0C10', accentSoft: '#241B42',
+        success: '#10B981', warn: '#F59E0B', danger: '#EF4444', info: '#60A5FA',
+        agent1: '#9366FF', agent2: '#38BDF8', agent3: '#34D399', agent4: '#F472B6', agent5: '#FBBF24', agent6: '#A78BFA',
       },
       light: {
-        bg: '#F2F4F8', surface1: '#FFFFFF', surface2: '#E9ECF2', surface3: '#DEE2EC',
-        ink1: '#0C0D12', ink2: '#454854', ink3: '#585B6A', hairline: '#D2D6E2',
-        accent: '#D63400', accentInk: '#FFFFFF', accentSoft: '#FFE6DC',
-        success: '#007A4D', warn: '#8F5600', danger: '#C41C38', info: '#1762B8',
-        agent1: '#C43800', agent2: '#007799', agent3: '#007A4D', agent4: '#7822B8', agent5: '#8F6B00', agent6: '#B81452',
+        bg: '#F4F5F9', surface1: '#FFFFFF', surface2: '#EAEBF2', surface3: '#DFE1EC',
+        ink1: '#0C0E14', ink2: '#474D5E', ink3: '#5C6377', hairline: '#D1D5E4',
+        accent: '#6D28D9', accentInk: '#FFFFFF', accentSoft: '#EDE9FE',
+        success: '#047857', warn: '#B45309', danger: '#B91C1C', info: '#1D4ED8',
+        agent1: '#6D28D9', agent2: '#0284C7', agent3: '#059669', agent4: '#DB2777', agent5: '#D97706', agent6: '#7C3AED',
       },
     },
   },

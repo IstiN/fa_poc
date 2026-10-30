@@ -37,7 +37,7 @@ npm start
 - **Empty** — non-destructive first-run preview: пустые Chats, Inbox, My Apps и
   My Boards. Повторное нажатие возвращает заполненное demo без потери его данных.
 - **Styleguide** — отдельная страница `styleguide.html`: три визуальных
-  направления (Prism, Graphite, Porcelain), light/dark, палитра с живым WCAG
+  направления (Nebula, Graphite, Porcelain), light/dark, палитра с живым WCAG
   расчётом, типографика, иконки и логотипы (только inline SVG), галерея
   компонентов и воспроизводимые переходы с spec-строкой. Выбор направления
   сохраняется через `Choose this direction`.
@@ -56,7 +56,7 @@ npm start
 - **A + Mobile + My Apps/Boards/Store:** `http://127.0.0.1:4173/?viewport=mobile#/a/apps`
 - **A + Mobile + command chips:** `http://127.0.0.1:4173/?viewport=mobile#/a/chats/agent:my:0`
 - **A + Mobile + Empty:** `http://127.0.0.1:4173/?empty=1&viewport=mobile#/a/chats`
-- **Styleguide направления:** `styleguide.html#direction=prism|graphite|porcelain&mode=light|dark`
+- **Styleguide направления:** `styleguide.html#direction=nebula|graphite|porcelain&mode=light|dark`
 
 `Cmd/Ctrl K` — глобальный поиск по агентам, каналам, networks и Apps.
 `Escape` — сначала скрыть keyboard, затем закрыть modal/fullscreen App или вернуться к списку.

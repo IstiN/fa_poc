@@ -1,24 +1,24 @@
 /* Fa 2.0 styleguide — tokens per [data-direction][data-mode]. Generated values mirror DIRECTIONS in styleguide.js. */
 
-/* ---------- Prism ---------- */
-[data-direction="prism"] {
+/* ---------- Nebula ---------- */
+[data-direction="nebula"] {
   --font-display: 'Space Grotesk', system-ui, sans-serif;
   --font-ui: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --r-xs: 3px;
-  --r-sm: 6px;
-  --r-md: 8px;
-  --r-lg: 12px;
-  --r-xl: 16px;
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
   --r-pill: 999px;
-  --dur-fast: 120ms;
-  --ease-fast: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-base: 200ms;
-  --ease-base: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-emph: 280ms;
-  --ease-emph: cubic-bezier(0.25, 1, 0.5, 1);
-  --dur-spring: 240ms;
-  --ease-spring: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  --dur-fast: 140ms;
+  --ease-fast: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --dur-base: 220ms;
+  --ease-base: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --dur-emph: 320ms;
+  --ease-emph: cubic-bezier(0.25, 1, 0.4, 1);
+  --dur-spring: 280ms;
+  --ease-spring: cubic-bezier(0.2, 1.1, 0.4, 1);
   --icon-stroke: 1.5;
   --icon-cap: round;
   --icon-join: round;
@@ -37,53 +37,53 @@
   --t-mono: 400 13px/20px var(--font-mono);
   --ls-mono: 0em;
 }
-[data-direction="prism"][data-mode="dark"] {
+[data-direction="nebula"][data-mode="dark"] {
   color-scheme: dark;
-  --bg: #0A0B0E;
-  --surface-1: #12141A;
-  --surface-2: #191C24;
-  --surface-3: #1F232B;
-  --ink-1: #F2F4F8;
-  --ink-2: #A4ACB8;
-  --ink-3: #8890A0;
-  --hairline: #282D38;
-  --accent: #FF4400;
-  --accent-ink: #0A0B0E;
-  --accent-soft: #2A1408;
-  --success: #00E599;
-  --warn: #FFB020;
-  --danger: #FF3355;
-  --info: #3399FF;
-  --agent-1: #FF5500;
-  --agent-2: #00D4FF;
-  --agent-3: #00E599;
-  --agent-4: #B84DFF;
-  --agent-5: #FFB800;
-  --agent-6: #FF2A7A;
+  --bg: #0B0C10;
+  --surface-1: #11131A;
+  --surface-2: #181B24;
+  --surface-3: #1E212D;
+  --ink-1: #F0F2F8;
+  --ink-2: #9BA3B8;
+  --ink-3: #8892A8;
+  --hairline: #242838;
+  --accent: #9366FF;
+  --accent-ink: #0B0C10;
+  --accent-soft: #241B42;
+  --success: #10B981;
+  --warn: #F59E0B;
+  --danger: #EF4444;
+  --info: #60A5FA;
+  --agent-1: #9366FF;
+  --agent-2: #38BDF8;
+  --agent-3: #34D399;
+  --agent-4: #F472B6;
+  --agent-5: #FBBF24;
+  --agent-6: #A78BFA;
 }
-[data-direction="prism"][data-mode="light"] {
+[data-direction="nebula"][data-mode="light"] {
   color-scheme: light;
-  --bg: #F2F4F8;
+  --bg: #F4F5F9;
   --surface-1: #FFFFFF;
-  --surface-2: #E9ECF2;
-  --surface-3: #DEE2EC;
-  --ink-1: #0C0D12;
-  --ink-2: #454854;
-  --ink-3: #585B6A;
-  --hairline: #D2D6E2;
-  --accent: #D63400;
+  --surface-2: #EAEBF2;
+  --surface-3: #DFE1EC;
+  --ink-1: #0C0E14;
+  --ink-2: #474D5E;
+  --ink-3: #5C6377;
+  --hairline: #D1D5E4;
+  --accent: #6D28D9;
   --accent-ink: #FFFFFF;
-  --accent-soft: #FFE6DC;
-  --success: #007A4D;
-  --warn: #8F5600;
-  --danger: #C41C38;
-  --info: #1762B8;
-  --agent-1: #C43800;
-  --agent-2: #007799;
-  --agent-3: #007A4D;
-  --agent-4: #7822B8;
-  --agent-5: #8F6B00;
-  --agent-6: #B81452;
+  --accent-soft: #EDE9FE;
+  --success: #047857;
+  --warn: #B45309;
+  --danger: #B91C1C;
+  --info: #1D4ED8;
+  --agent-1: #6D28D9;
+  --agent-2: #0284C7;
+  --agent-3: #059669;
+  --agent-4: #DB2777;
+  --agent-5: #D97706;
+  --agent-6: #7C3AED;
 }
 
 /* ---------- Graphite ---------- */
@@ -259,11 +259,11 @@
 }
 
 /* ---------- per-direction flavour (non-colour) ---------- */
-[data-direction="prism"] { --press-scale: 0.97; --display-ls: -0.03em; --caption-transform: none; --row-gap: 2px; --bubble-r: 12px; }
+[data-direction="nebula"] { --press-scale: 0.97; --display-ls: -0.03em; --caption-transform: none; --row-gap: 3px; --bubble-r: 16px; }
 [data-direction="graphite"] { --press-scale: 1; --display-ls: -0.025em; --caption-transform: uppercase; --row-gap: 0px; --bubble-r: 6px; }
 [data-direction="porcelain"] { --press-scale: 0.96; --display-ls: -0.03em; --caption-transform: none; --row-gap: 4px; --bubble-r: 20px; }
-[data-direction="prism"][data-mode="light"] { --shadow-float: 0 1px 2px rgba(12, 13, 18, 0.06), 0 12px 28px -12px rgba(12, 13, 18, 0.18); --scrim: rgba(12, 13, 18, 0.35); }
-[data-direction="prism"][data-mode="dark"] { --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 1px var(--hairline), 0 16px 36px -16px rgba(0, 0, 0, 0.8); --scrim: rgba(0, 0, 0, 0.7); }
+[data-direction="nebula"][data-mode="light"] { --shadow-float: 0 1px 2px rgba(12, 14, 20, 0.05), 0 12px 28px -12px rgba(12, 14, 20, 0.16); --scrim: rgba(12, 14, 20, 0.35); }
+[data-direction="nebula"][data-mode="dark"] { --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 1px var(--hairline), 0 16px 36px -16px rgba(0, 0, 0, 0.8); --scrim: rgba(0, 0, 0, 0.7); }
 [data-direction="graphite"][data-mode="dark"] { --shadow-float: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px var(--hairline); --scrim: rgba(0, 0, 0, 0.6); }
 [data-direction="graphite"][data-mode="light"] { --shadow-float: 0 0 0 1px var(--hairline), 0 8px 20px -12px rgba(15, 17, 20, 0.25); --scrim: rgba(15, 17, 20, 0.3); }
 [data-direction="porcelain"][data-mode="light"] { --shadow-float: 0 24px 48px -24px rgba(18, 40, 60, 0.28), 0 2px 6px -2px rgba(18, 40, 60, 0.08); --scrim: rgba(18, 23, 28, 0.28); }

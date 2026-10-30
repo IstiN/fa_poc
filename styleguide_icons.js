@@ -56,11 +56,11 @@ function svgOpen(size, label, className = '') {
 
 export function logoMark(direction, size = 64) {
   if (direction === 'graphite') {
-    // Prism (default)
+    // Nebula (default)
   return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-    <polygon points="32,8 54,48 10,48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
-    <circle cx="32" cy="35" r="4.5" fill="var(--accent)"/>
-    <line x1="32" y1="8" x2="32" y2="24" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.6"/>
+    <circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="32" cy="32" r="8" fill="var(--accent)"/>
+    <circle cx="32" cy="10" r="3" fill="var(--accent)"/>
   </svg>`;
   }
   if (direction === 'porcelain') {
@@ -111,7 +111,7 @@ export function wordmark(direction, width = 168) {
 }
 
 export const LOGO_NOTES = {
-  prism: 'An equilateral prism refracting into a hyper-accent core; geometry is bold and unmistakable at 16px.',
+  nebula: 'An orbital ring with a calm iris-violet core; futuristic, focused and easy on the eyes.',
   graphite: 'A calibrated frame with centre crosshair; the amber cell marks the exact point that needs attention.',
   porcelain: 'A continuous ceramic pill; the lagoon dot is the living agent inside the vessel.',
 };
