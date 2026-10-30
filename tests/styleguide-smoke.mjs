@@ -137,7 +137,7 @@ try {
   assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), 'Porcelain');
   assert.equal(await evaluate('document.querySelector(".sg-back").getAttribute("href")'), 'index.html');
   assert.equal(await count('.sg-seg [data-direction-button]'), 4);
-  assert.equal(await count('[data-section]'), 8);
+  assert.equal(await count('[data-section]'), 11);
 
   // Every direction and mode renders all sections without a JS exception.
   for (const direction of ['graphite', 'nebula', 'porcelain', 'glass']) {
@@ -145,7 +145,7 @@ try {
     assert.equal(await evaluate('document.documentElement.dataset.direction'), direction);
     const expectedName = { nebula: 'Nebula', graphite: 'Graphite', porcelain: 'Porcelain', glass: 'Liquid Glass' }[direction];
     assert.equal(await evaluate('document.querySelector(".sg-hero h1").textContent'), expectedName);
-    assert.equal(await count('[data-section]'), 8);
+    assert.equal(await count('[data-section]'), 11);
     assert.ok(await count('.swatch') >= 21, `${direction} palette swatches`);
     assert.equal(await count('.sg-table .is-bad'), 0, `${direction} WCAG rows`);
     assert.ok(await count('.icon-cell') >= 24, `${direction} inline SVG icon cells`);

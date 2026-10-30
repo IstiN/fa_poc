@@ -101,6 +101,10 @@
   <a href="index.html" style="border-color:rgba(56,189,248,0.4); color:var(--cyan);">← Wireframes</a>
   <a href="styleguide.html" style="border-color:rgba(147,102,255,0.4); color:var(--violet);">Styleguide (Themes) →</a>
   <span style="font-weight:800; font-size:13px; color:var(--text-1); margin: 0 6px 0 12px;">Секции:</span>
+  <a href="#pro" style="border-color:rgba(56,189,248,0.5); color:var(--cyan); background:rgba(56,189,248,0.05);">🏆 PRO FINAL: Canonical Brand System</a>
+  <a href="#bubble-squircle" style="border-color:rgba(147,102,255,0.5); color:var(--violet);">💬 Bubble-Squircle (Horizon + Fa)</a>
+  <a href="#squircle-bubble" style="border-color:rgba(56,189,248,0.5); color:var(--cyan);">📱 Squircle + Bubble Inside (iOS/macOS)</a>
+  <a href="#refined" style="border-color:rgba(56,189,248,0.5); color:var(--cyan);">🎯 Refined V2 & V4 Concepts</a>
   <a href="#sec8">⚡ 8. Точка заливает дырку "a"</a>
   <a href="#sec7">7. Большая F, малая a</a>
   <a href="#sec1">1. A1 Horizon</a>
@@ -113,6 +117,34 @@
 <h1>Fa 2.0 Logo Lab — Fine Tuned</h1>
 <p class="lead">Точечная доводка по фидбеку: <b>A1-horizontal</b>, исправленная пимпочка в <b>C1-capsule</b>, точка заливает отверстие в <b>a</b>, большая <b>F</b> и аккуратная малая <b>a</b>, воздух в <b>b3-square</b>.</p>
 
+
+<!-- ======================================================== -->
+<h2 id="pro" style="color:#38BDF8; font-size:15px;">🏆 PRO DIRECTION — Профессиональная векторная доводка (Canonical Identity)</h2>
+<p class="lead">Мы отказались от зависимости от системных шрифтов в логотипе. Здесь знак <b>Fa</b> нарисован чистыми математическими векторными путями (<code>SVG paths</code>) — геометрия будет идеально одинаковой на iOS, Android, вебе и в терминале. Точка-ядро агента аккуратно интегрирована в архитектуру буквы <b>a</b>.</p>
+<div class="grid" id="secProBrand"></div>
+
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<h2 id="bubble-squircle" style="color:#9366FF; font-size:15px;">💬 BUBBLE-SQUIRCLE — Горизонт в облачке сообщения (Horizon + Fa)</h2>
+<p class="lead">Мы убрали «квадратную» коробку и превратили её в <b>мягкое облачко сообщения (Squircle Bubble)</b>. Внутри — терминальный промпт <code>&gt;_</code> с точкой-ядром, а снизу аккуратно вписано <b>Fa</b>. Знак теперь читается как «живой агент в мессенджере», а не как иконка терминала.</p>
+<div class="grid" id="secBubbleSquircle"></div>
+
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<h2 id="squircle-bubble" style="color:#38BDF8; font-size:15px;">📱 SQUIRCLE + BUBBLE INSIDE — Иконка для iOS / macOS</h2>
+<p class="lead">Классический <b>squircle</b> (как иконка приложения на iPhone / macOS), но внутри него — <b>облачко сообщения</b> с терминальным промптом <code>&gt;_</code> и <b>Fa</b>. Получается «агент в мессенджере» в формате нативной иконки.</p>
+<div class="grid" id="secSquircleBubble"></div>
+
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<h2 id="refined" style="color:#38BDF8; font-size:15px;">🎯 REFINED V2 & V4 CONCEPTS — Доводка фаворитов</h2>
+<p class="lead">Поработали с расположением элементов: <b>V2</b> — крупный <b>Fa</b> с маленьким <code>&gt;_</code> в разных позициях, <b>V4</b> — облачко с <code>&gt;_ •</code> и <b>Fa</b> в разных интеграциях.</p>
+<div class="grid" id="secRefined"></div>
+
+<!-- ======================================================== -->
 <!-- ======================================================== -->
 <h2 id="sec8">8. Точка размером ровно с дырку в "a" (Point FILLS counter / Hole = Dot)</h2>
 <div class="grid" id="secDotHole"></div>
@@ -395,6 +427,270 @@ document.getElementById('secHybrids').innerHTML = [
     </g>
   </svg>`, 'H3-bubble-a-core', 'Bubble + a-core', 'Симбиоз H1 и встроенной точки в отверстии a.')
 ].join('');
+
+// ----------------------------------------------------
+// PRO DIRECTION: Hand-Crafted Vector Logo Paths (No System Fonts!)
+// ----------------------------------------------------
+function proCard(svg, tag, title, note, fav = false) {
+  return `<div class="card ${fav ? 'fav' : ''}">${svg}<span class="tag">${tag}</span><span class="title">${title}</span><small>${note}</small></div>`;
+}
+
+// Vector path for uppercase "F" (geometric, tall, rounded strokes)
+const pathF = (x, y, scale = 1) => `
+  <g transform="translate(${x}, ${y}) scale(${scale})">
+    <path d="M0 28 V0 H16" fill="none" stroke="#F0F4FC" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="0" y1="12.5" x2="12" y2="12.5" stroke="#F0F4FC" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+`;
+
+// Vector path for lowercase "a" with integrated agent-core dot inside its bowl
+const pathA = (x, y, scale = 1, dotColor = "#9366FF", ringColor = "#38BDF8") => `
+  <g transform="translate(${x}, ${y}) scale(${scale})">
+    <!-- Bowl of 'a': mathematical circle with stroke -->
+    <circle cx="7" cy="11" r="6.5" fill="none" stroke="${ringColor}" stroke-width="3"/>
+    <!-- Right ascender/leg of 'a' -->
+    <path d="M13.5 4.5 V17.5" fill="none" stroke="${ringColor}" stroke-width="3" stroke-linecap="round"/>
+    <!-- Agent core dot filling the bowl perfectly -->
+    <circle cx="7" cy="11" r="3.2" fill="${dotColor}"/>
+  </g>
+`;
+
+// Terminal chevron + underscore vector paths
+const pathPrompt = (x, y, scale = 1, color = "#38BDF8") => `
+  <g transform="translate(${x}, ${y}) scale(${scale})">
+    <path d="M0 0 L7 6 L0 12" fill="none" stroke="${color}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="18" y2="12" stroke="${color}" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+`;
+
+document.getElementById('secProBrand').innerHTML = [
+  // PRO 1: Squircle App Icon (Clean vector 'Fa', large F, small a with dot core)
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="24" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <!-- Inner subtle soft highlight -->
+    <rect x="4" y="4" width="76" height="76" rx="24" fill="url(#gSoftPro)" opacity="0.15"/>
+    <defs>
+      <linearGradient id="gSoftPro" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#38BDF8"/>
+        <stop offset="100%" stop-color="#9366FF"/>
+      </linearGradient>
+    </defs>
+    <!-- Vector 'F' (28px height) starting at (24, 26) -->
+    ${pathF(24, 26, 1.0)}
+    <!-- Vector 'a' (x-height ~19px) starting at (45, 35) -->
+    ${pathA(45, 35, 0.85)}
+  </svg>`, 'PRO-Squircle-Vector', 'Векторный знак Fa (App Icon)', 'Большая F (28px) и аккуратная маленькая a с точкой внутри овала. Никакого шрифта — чистый математический вектор.', true),
+
+  // PRO 2: Bubble Messenger Lockup (> Fa •)
+  proCard(`<svg width="104" height="84" viewBox="0 0 104 84">
+    <!-- Hand-crafted capsule bubble with precise non-jittery tail -->
+    <path d="M18 18 H86 A10 10 0 0 1 96 28 V50 A10 10 0 0 1 86 60 H38 L22 70 V60 H18 A10 10 0 0 1 8 50 V28 A10 10 0 0 1 18 18 Z" fill="#101422" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Chevron + underscore -->
+    ${pathPrompt(19, 32, 0.9)}
+    <!-- Vector 'F' starting at (42, 28) -->
+    ${pathF(42, 28, 0.75)}
+    <!-- Vector 'a' starting at (58, 36) -->
+    ${pathA(58, 36, 0.65)}
+  </svg>`, 'PRO-Bubble-Lockup', 'Мессенджер + CLI + Agent', 'Облачко диалога, внутри терминальный промпт >_ и векторные буквы Fa. Идеально читается даже в 16px.', true),
+
+  // PRO 3: Horizon Minimal Mark (>_ with agent core dot)
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="24" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <!-- Chevron > -->
+    <path d="M24 28 L36 42 L24 56" fill="none" stroke="#38BDF8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Underscore _ -->
+    <line x1="43" y1="56" x2="55" y2="56" stroke="#38BDF8" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Living core dot at y=42 -->
+    <circle cx="54" cy="42" r="5" fill="#9366FF"/>
+  </svg>`, 'PRO-Horizon-Core', 'Горизонт: CLI + Ядро', 'Шеврон и курсор в циане, светящееся фиолетовое ядро агента на уровне взгляда (y=42). Чистый геометрический баланс.', true),
+
+  // PRO 4: Horizontal Wordmark Lockup (for App Navbar / Website Header)
+  proCard(`<svg width="260" height="64" viewBox="0 0 260 64">
+    <!-- Bubble Squircle Icon (44x44) -->
+    <g transform="translate(4, 10)">
+      <rect x="0" y="0" width="44" height="44" rx="14" fill="#101422" stroke="#38BDF8" stroke-width="1.5"/>
+      ${pathF(11, 11, 0.6)}
+      ${pathA(24, 17, 0.5)}
+    </g>
+    <!-- Horizontal Text: "Fa" in crisp bold + "agent" in airy light -->
+    <text x="60" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="89" cy="34" r="3.5" fill="#38BDF8"/>
+    <text x="100" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="12.5" font-weight="600" fill="#9FB0D0" letter-spacing="0.12em" text-transform="uppercase">AGENT MESSENGER</text>
+  </svg>`, 'PRO-Wordmark-H', 'Горизонтальный локап', 'Официальный локап для шапки приложения и веб-сайта: знак Fa + разделительная точка + подпись AGENT MESSENGER.', true),
+].join('');
+
+
+// ----------------------------------------------------
+// BUBBLE-SQUIRCLE: Horizon terminal inside a soft message cloud
+// ----------------------------------------------------
+document.getElementById('secBubbleSquircle').innerHTML = [
+  // V1: Bubble with >_ • on top and Fa below
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <path d="M18 8 H66 A16 16 0 0 1 82 24 V56 A16 16 0 0 1 66 72 H36 L22 82 V72 H18 A16 16 0 0 1 2 56 V24 A16 16 0 0 1 18 8 Z" fill="#101422" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M20 24 L30 34 L20 44" fill="none" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="34" y1="44" x2="43" y2="44" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="49" cy="34" r="4" fill="#9366FF"/>
+    <text x="45" y="62" font-family="-apple-system, system-ui, sans-serif" font-size="18" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'Bubble-V1', 'Облачко + Терминал + Fa', 'Шеврон >_ и точка-ядро сверху, Fa снизу справа. Мягкий squircle с хвостиком баббла.', true),
+
+  // V2: Soft glass bubble with Fa and core dot
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <defs>
+      <linearGradient id="gBubV2" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#9366FF" stop-opacity="0.08"/>
+      </linearGradient>
+    </defs>
+    <path d="M18 8 H66 A16 16 0 0 1 82 24 V56 A16 16 0 0 1 66 72 H36 L22 82 V72 H18 A16 16 0 0 1 2 56 V24 A16 16 0 0 1 18 8 Z" fill="url(#gBubV2)" stroke="#38BDF8" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M18 22 L28 32 L18 42" fill="none" stroke="#F0F4FC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="32" y1="42" x2="41" y2="42" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    <text x="20" y="62" font-family="-apple-system, system-ui, sans-serif" font-size="20" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="48" cy="58" r="3.5" fill="#38BDF8"/>
+  </svg>`, 'Bubble-V2-Glass', 'Матовое облачко', 'Полупрозрачный градиентный squircle, Fa снизу слева, точка-ядро рядом.', true),
+
+  // V3: Compact single-row lockup inside bubble
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <path d="M18 8 H66 A16 16 0 0 1 82 24 V56 A16 16 0 0 1 66 72 H36 L22 82 V72 H18 A16 16 0 0 1 2 56 V24 A16 16 0 0 1 18 8 Z" fill="#101422" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M16 30 L24 38 L16 46" fill="none" stroke="#38BDF8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="27" y1="46" x2="33" y2="46" stroke="#38BDF8" stroke-width="2.8" stroke-linecap="round"/>
+    <text x="37" y="46" font-family="-apple-system, system-ui, sans-serif" font-size="21" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="65" cy="43" r="3.5" fill="#9366FF"/>
+  </svg>`, 'Bubble-V3-Compact', 'Компактный локап', 'Всё в одну строку: >_ Fa • внутри облачка. Идеально для таб-бара и шапки.', true),
+
+  // V4: Centered Fa with chevron and dot above
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <path d="M18 8 H66 A16 16 0 0 1 82 24 V56 A16 16 0 0 1 66 72 H36 L22 82 V72 H18 A16 16 0 0 1 2 56 V24 A16 16 0 0 1 18 8 Z" fill="#101422" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M24 20 L34 30 L24 40" fill="none" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="44" cy="30" r="4" fill="#38BDF8"/>
+    <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="24" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'Bubble-V4-Centered', 'Центрированный Fa', 'Шеврон и точка сверху, крупный Fa по центру. Максимальная читаемость на маленьких размерах.', true),
+].join('');
+
+
+// ----------------------------------------------------
+// SQUIRCLE + BUBBLE INSIDE: iOS/macOS app icon with message cloud
+// ----------------------------------------------------
+document.getElementById('secSquircleBubble').innerHTML = [
+  // V1: Squircle with bubble containing >_ Fa •
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="url(#gSqV1)" opacity="0.12"/>
+    <defs>
+      <linearGradient id="gSqV1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#38BDF8"/>
+        <stop offset="100%" stop-color="#9366FF"/>
+      </linearGradient>
+    </defs>
+    <path d="M20 22 H64 A8 8 0 0 1 72 30 V46 A8 8 0 0 1 64 54 H38 L26 62 V54 H20 A8 8 0 0 1 12 46 V30 A8 8 0 0 1 20 22 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 32 L28 38 L22 44" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="31" y1="44" x2="37" y2="44" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="41" y="44" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="60" cy="41" r="3" fill="#9366FF"/>
+  </svg>`, 'Squircle-V1', 'Squircle + Bubble + >_ Fa •', 'Классический squircle с облачком внутри: терминал >_ и Fa с точкой-ядром.', true),
+
+  // V2: Squircle with bubble containing large Fa and small >_
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 22 H64 A8 8 0 0 1 72 30 V46 A8 8 0 0 1 64 54 H38 L26 62 V54 H20 A8 8 0 0 1 12 46 V30 A8 8 0 0 1 20 22 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <text x="24" y="46" font-family="-apple-system, system-ui, sans-serif" font-size="22" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <path d="M52 28 L57 33 L52 38" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="59" y1="38" x2="63" y2="38" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="60" cy="46" r="3" fill="#9366FF"/>
+  </svg>`, 'Squircle-V2', 'Крупный Fa + маленький >_', 'Fa доминирует в облачке, терминал >_ маленький сверху справа.', true),
+
+  // V3: Squircle with glass bubble and >_ Fa •
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <defs>
+      <linearGradient id="gSqV3" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.2"/>
+        <stop offset="100%" stop-color="#9366FF" stop-opacity="0.1"/>
+      </linearGradient>
+    </defs>
+    <path d="M20 22 H64 A8 8 0 0 1 72 30 V46 A8 8 0 0 1 64 54 H38 L26 62 V54 H20 A8 8 0 0 1 12 46 V30 A8 8 0 0 1 20 22 Z" fill="url(#gSqV3)" stroke="#38BDF8" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M22 32 L28 38 L22 44" fill="none" stroke="#F0F4FC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="31" y1="44" x2="37" y2="44" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="41" y="44" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="60" cy="41" r="3" fill="#38BDF8"/>
+  </svg>`, 'Squircle-V3-Glass', 'Матовое стекло', 'Полупрозрачное облачко с градиентом внутри squircle. Лёгкое и воздушное.', true),
+
+  // V4: Squircle with bubble containing just >_ • (minimal, Fa below)
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 20 H64 A8 8 0 0 1 72 28 V42 A8 8 0 0 1 64 50 H38 L26 58 V50 H20 A8 8 0 0 1 12 42 V28 A8 8 0 0 1 20 20 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M28 28 L34 34 L28 40" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="37" y1="40" x2="43" y2="40" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="50" cy="34" r="3.5" fill="#9366FF"/>
+    <text x="32" y="70" font-family="-apple-system, system-ui, sans-serif" font-size="18" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'Squircle-V4-Minimal', 'Минимализм: >_ • + Fa', 'Облачко только с терминалом >_ •, Fa снизу под облачком.', true),
+].join('');
+
+
+// ----------------------------------------------------
+// REFINED V2 & V4: Fine-tuned placement concepts
+// ----------------------------------------------------
+document.getElementById('secRefined').innerHTML = [
+  // V2-A: Large Fa with small >_ above-left
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 22 H64 A8 8 0 0 1 72 30 V46 A8 8 0 0 1 64 54 H38 L26 62 V54 H20 A8 8 0 0 1 12 46 V30 A8 8 0 0 1 20 22 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M20 28 L24 32 L20 36" fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="26" y1="36" x2="30" y2="36" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="26" y="48" font-family="-apple-system, system-ui, sans-serif" font-size="24" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <circle cx="58" cy="44" r="3.5" fill="#9366FF"/>
+  </svg>`, 'V2-A', 'Fa large, >_ top-left', 'Маленький >_ в верхнем левом углу облачка, крупный Fa по центру, точка справа.', true),
+
+  // V2-B: Large Fa with >_ integrated into the 'a' dot
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 22 H64 A8 8 0 0 1 72 30 V46 A8 8 0 0 1 64 54 H38 L26 62 V54 H20 A8 8 0 0 1 12 46 V30 A8 8 0 0 1 20 22 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <text x="24" y="48" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+    <path d="M50 28 L54 32 L50 36" fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="56" y1="36" x2="60" y2="36" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="48" cy="44" r="3" fill="#9366FF"/>
+  </svg>`, 'V2-B', 'Fa + >_ accent above', 'Крупный Fa, >_ как акцент над буквой a, точка внутри a.', true),
+
+  // V4-A: Bubble with >_ • centered, Fa below in accent
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 20 H64 A8 8 0 0 1 72 28 V42 A8 8 0 0 1 64 50 H38 L26 58 V50 H20 A8 8 0 0 1 12 42 V28 A8 8 0 0 1 20 20 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M30 28 L36 34 L30 40" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="39" y1="40" x2="45" y2="40" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="52" cy="34" r="3.5" fill="#9366FF"/>
+    <text x="32" y="72" font-family="-apple-system, system-ui, sans-serif" font-size="18" font-weight="800" fill="#38BDF8" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'V4-A', 'Bubble >_ • + Fa accent', 'Облачко с терминалом >_ •, Fa снизу в акцентном циане.', true),
+
+  // V4-B: Bubble with >_ •, Fa integrated as watermark
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 20 H64 A8 8 0 0 1 72 28 V42 A8 8 0 0 1 64 50 H38 L26 58 V50 H20 A8 8 0 0 1 12 42 V28 A8 8 0 0 1 20 20 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M30 28 L36 34 L30 40" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="39" y1="40" x2="45" y2="40" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="52" cy="34" r="3.5" fill="#9366FF"/>
+    <text x="58" y="74" font-family="-apple-system, system-ui, sans-serif" font-size="14" font-weight="800" fill="#38BDF8" opacity="0.6" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'V4-B', 'Bubble + Fa watermark', 'Облачко с терминалом, Fa как полупрозрачный водяной знак в углу.', true),
+
+  // V4-C: Bubble with >_ •, Fa integrated into bubble tail
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 20 H64 A8 8 0 0 1 72 28 V42 A8 8 0 0 1 64 50 H38 L26 58 V50 H20 A8 8 0 0 1 12 42 V28 A8 8 0 0 1 20 20 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M30 28 L36 34 L30 40" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="39" y1="40" x2="45" y2="40" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="52" cy="34" r="3.5" fill="#9366FF"/>
+    <text x="20" y="66" font-family="-apple-system, system-ui, sans-serif" font-size="14" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'V4-C', 'Bubble + Fa in tail', 'Облачко с терминалом, Fa в области хвостика баббла.', true),
+
+  // V4-D: Bubble with >_ •, Fa as part of squircle bottom-right
+  proCard(`<svg width="84" height="84" viewBox="0 0 84 84">
+    <rect x="4" y="4" width="76" height="76" rx="22" fill="#101422" stroke="#25324E" stroke-width="1.5"/>
+    <path d="M20 20 H64 A8 8 0 0 1 72 28 V42 A8 8 0 0 1 64 50 H38 L26 58 V50 H20 A8 8 0 0 1 12 42 V28 A8 8 0 0 1 20 20 Z" fill="#121828" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M30 28 L36 34 L30 40" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="39" y1="40" x2="45" y2="40" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="52" cy="34" r="3.5" fill="#9366FF"/>
+    <text x="52" y="72" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="800" fill="#F0F4FC" letter-spacing="-0.02em">Fa</text>
+  </svg>`, 'V4-D', 'Bubble + Fa bottom-right', 'Облачко с терминалом, Fa в нижнем правом углу squircle.', true),
+].join('');
+
 </script>
 </body>
 </html>

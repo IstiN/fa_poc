@@ -66,6 +66,18 @@ test('each direction has a mark, app icon, favicon and wordmark', () => {
   }
 });
 
+test('all logo surfaces use the approved Squircle-V4-Minimal geometry', () => {
+  for (const id of DIRECTION_IDS) {
+    for (const svg of [logoMark(id), appIcon(id), favicon(id)]) {
+      assert.match(svg, /viewBox="0 0 84 84"/);
+      assert.match(svg, /M20 20 H64 A8 8 0 0 1 72 28 V42/);
+      assert.match(svg, /aria-label="[^"]*Squircle V4 Minimal"/);
+      assert.doesNotMatch(svg, /Soft bubble-squircle|B3-square/);
+    }
+    assert.match(wordmark(id), /Squircle V4 Minimal/);
+  }
+});
+
 test('styleguide links are deep-linkable', () => {
   assert.deepEqual(parseHash('#direction=graphite&mode=dark'), { direction: 'graphite', mode: 'dark', font: null });
   assert.deepEqual(parseHash('#direction=glass&mode=dark&font=geist'), { direction: 'glass', mode: 'dark', font: 'geist' });

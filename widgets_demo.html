@@ -1,0 +1,546 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fa 2.0 — Apps Grid & Live Widgets Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styleguide.css">
+<link rel="stylesheet" href="styleguide_ui.css">
+<style>
+  :root {
+    --bg: #080A10;
+    --card: #101422;
+    --border: #1E263C;
+    --text-1: #F0F4FC;
+    --text-2: #9FB0D0;
+    --text-3: #586888;
+    --cyan: #38BDF8;
+    --violet: #9366FF;
+    --accent: #38BDF8;
+    --accent-ink: #080A10;
+    --hairline: #222D46;
+    --surface-1: #0F1320;
+    --surface-2: #161B2C;
+    --surface-3: #1E243A;
+    --font-ui: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--font-ui);
+    margin: 0;
+    padding: 30px 40px 100px;
+    box-sizing: border-box;
+  }
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .top-nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface-1);
+  }
+  .top-nav a:hover {
+    color: var(--text-1);
+    border-color: var(--cyan);
+  }
+  .theme-toggle {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+  .theme-toggle button {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .theme-toggle button.active {
+    background: var(--cyan);
+    color: var(--bg);
+    border-color: var(--cyan);
+    font-weight: 700;
+  }
+  h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.02em; }
+  p.lead { color: var(--text-2); margin: 0 0 32px; font-size: 14.5px; }
+
+  /* SECTION HEADERS */
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    margin: 40px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* APPS LAUNCHER GRID (iOS / macOS Launchpad Style) */
+  .apps-launcher {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .app-icon-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+  .app-icon-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--cyan);
+    background: var(--surface-2);
+    box-shadow: 0 8px 24px -6px rgba(56, 189, 248, 0.25);
+  }
+  .app-badge-running {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34D399;
+    box-shadow: 0 0 8px #34D399;
+  }
+  .app-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .app-name { font-size: 13px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
+  .app-cat { font-size: 11px; color: var(--text-3); font-weight: 500; }
+
+  /* MULTI-WIDGET DASHBOARD / BOARD LAYOUT */
+  .board-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+  .widget-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    position: relative;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .widget-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-1);
+  }
+  .widget-actions {
+    display: flex;
+    gap: 6px;
+    color: var(--text-3);
+  }
+  .widget-actions button {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+  }
+  .widget-actions button:hover { color: var(--text-1); }
+
+  /* SPAN HELPERS */
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-8 { grid-column: span 8; }
+  .col-12 { grid-column: span 12; }
+  @media (max-width: 1024px) {
+    .col-4, .col-6, .col-8 { grid-column: span 12; }
+  }
+
+  /* WIDGET CONTENT STYLES */
+  /* 1. Terminal / Process Widget */
+  .term-box {
+    background: #05060A;
+    border: 1px solid #161A28;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: #A0ACCA;
+    height: 140px;
+    overflow-y: auto;
+  }
+  .term-line-cmd { color: var(--cyan); }
+  .term-line-ok { color: #34D399; }
+  .term-line-dim { color: #586888; }
+
+  /* 2. Trajectory DAG Timeline */
+  .dag-nodes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 0;
+  }
+  .dag-node {
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 110px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .dag-node.active {
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+  }
+  .dag-node b { font-size: 11.5px; color: var(--text-1); }
+  .dag-node span { font-size: 10px; color: var(--text-3); font-family: var(--font-mono); }
+  .dag-arrow { color: var(--text-3); font-size: 14px; flex-shrink: 0; }
+
+  /* 3. Task / Deliverables Checklist */
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .task-item.done { opacity: 0.6; text-decoration: line-through; }
+  .task-item input[type="checkbox"] { accent-color: var(--cyan); width: 16px; height: 16px; }
+
+  /* 4. Agent Status & Token Meter */
+  .metric-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .metric-pill {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .metric-pill small { font-size: 11px; color: var(--text-3); text-transform: uppercase; font-weight: 700; }
+  .metric-pill b { font-size: 18px; color: var(--text-1); font-family: var(--font-mono); }
+
+  /* 5. Calendar Grid */
+  .cal-mini {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+    font-size: 11.5px;
+  }
+  .cal-head { color: var(--text-3); font-weight: 700; font-size: 10.5px; padding-bottom: 4px; }
+  .cal-day {
+    padding: 6px 0;
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text-2);
+    cursor: pointer;
+  }
+  .cal-day.today {
+    background: var(--cyan);
+    color: var(--bg);
+    font-weight: 800;
+  }
+  .cal-day.has-event {
+    border: 1px solid var(--violet);
+    color: var(--text-1);
+  }
+</style>
+</head>
+<body data-direction="glass" data-mode="dark" data-font="system">
+
+  <div class="top-nav">
+    <a href="index.html">← Wireframes</a>
+    <a href="styleguide.html">Styleguide →</a>
+    <a href="logos.html">Logos Lab →</a>
+    <span style="font-weight:700; font-size:14px; margin-left:12px;">Apps & Widgets Dashboard</span>
+    <div class="theme-toggle">
+      <button type="button" class="active" onclick="setTheme('glass')">Liquid Glass</button>
+      <button type="button" onclick="setTheme('nebula')">Nebula</button>
+      <button type="button" onclick="setTheme('graphite')">Graphite</button>
+      <button type="button" onclick="setTheme('porcelain')">Porcelain</button>
+    </div>
+  </div>
+
+  <h1>Apps & Widgets System</h1>
+  <p class="lead">Концепция расширяемой платформы: <b>Лаунчер приложений</b> (Apps Grid) и <b>Интерактивная доска виджетов</b> (Boards / Widgets). Каждый агент может разворачивать свой рабочий интерфейс или встраивать виджет в общую панель.</p>
+
+  <!-- ======================================================== -->
+  <div class="section-title">1. Apps Grid / Launcher (Установленные приложения)</div>
+  <div class="apps-launcher">
+    <!-- App 1 -->
+    <div class="app-icon-card">
+      <span class="app-badge-running" title="Running process"></span>
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #0284C7, #38BDF8);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+      </div>
+      <span class="app-name">Boards</span>
+      <span class="app-cat">Workspace</span>
+    </div>
+
+    <!-- App 2 -->
+    <div class="app-icon-card">
+      <span class="app-badge-running" title="Running process"></span>
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #7C3AED, #9366FF);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="app-name">Trajectory</span>
+      <span class="app-cat">Diagnostics</span>
+    </div>
+
+    <!-- App 3 -->
+    <div class="app-icon-card">
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #059669, #10B981);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <span class="app-name">Calendar</span>
+      <span class="app-cat">Planner</span>
+    </div>
+
+    <!-- App 4 -->
+    <div class="app-icon-card">
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #D97706, #F59E0B);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      </div>
+      <span class="app-name">Terminal</span>
+      <span class="app-cat">PTY Shell</span>
+    </div>
+
+    <!-- App 5 -->
+    <div class="app-icon-card">
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #DB2777, #EC4899);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <span class="app-name">Export</span>
+      <span class="app-cat">PDF / PPTX</span>
+    </div>
+
+    <!-- App 6 -->
+    <div class="app-icon-card">
+      <div class="app-icon-box" style="background: linear-gradient(135deg, #4F46E5, #6366F1);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <span class="app-name">Networks</span>
+      <span class="app-cat">DAP Fabric</span>
+    </div>
+
+    <!-- Add custom app -->
+    <div class="app-icon-card" style="border-style: dashed; background: transparent;">
+      <div class="app-icon-box" style="background: var(--surface-3); color: var(--text-3); box-shadow:none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <span class="app-name" style="color: var(--text-2);">New App</span>
+      <span class="app-cat">Add Custom</span>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <div class="section-title">2. Live Widgets Board (Рабочий стол агентов)</div>
+  <div class="board-grid">
+
+    <!-- WIDGET 1: Live Terminal Execution (Col 8) -->
+    <div class="widget-card col-8">
+      <div class="widget-header">
+        <div class="widget-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Release Manager · Bash Session
+          <span style="font-size:10px; color:#34D399; background:rgba(52,211,153,0.15); padding:2px 8px; border-radius:999px;">PID 54109</span>
+        </div>
+        <div class="widget-actions">
+          <button title="Stop Process"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></button>
+          <button title="Fullscreen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg></button>
+        </div>
+      </div>
+      <div class="term-box">
+        <div class="term-line-dim">[14:02:11] initializing sandbox /tmp/fa-release-check...</div>
+        <div><span class="term-line-cmd">$</span> git status --short</div>
+        <div class="term-line-dim">M  lib/src/release_checker.dart</div>
+        <div class="term-line-dim">M  test/release_test.dart</div>
+        <div><span class="term-line-cmd">$</span> dart analyze --fatal-infos</div>
+        <div class="term-line-ok">Analyzing flutter_agent... No issues found! (0.8s)</div>
+        <div><span class="term-line-cmd">$</span> flutter test test/release_test.dart</div>
+        <div class="term-line-ok">00:04 +12: All tests passed!</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-pill">
+          <small>Memory</small>
+          <b>42.8 MB</b>
+        </div>
+        <div class="metric-pill">
+          <small>Duration</small>
+          <b>4.2s</b>
+        </div>
+        <div class="metric-pill">
+          <small>Tokens</small>
+          <b>1,420</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 2: Mini Calendar & Deliverables (Col 4) -->
+    <div class="widget-card col-4">
+      <div class="widget-header">
+        <div class="widget-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Release Milestones
+        </div>
+        <span style="font-size:11px; color:var(--text-3);">October 2026</span>
+      </div>
+      <div class="cal-mini">
+        <div class="cal-head">M</div><div class="cal-head">T</div><div class="cal-head">W</div><div class="cal-head">T</div><div class="cal-head">F</div><div class="cal-head">S</div><div class="cal-head">S</div>
+        <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day today">30</div><div class="cal-day has-event">31</div><div class="cal-day">1</div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="task-item done">
+          <input type="checkbox" checked disabled>
+          <span>v2.6.0 changelog verified</span>
+        </div>
+        <div class="task-item">
+          <input type="checkbox">
+          <span style="font-weight:600; color:var(--cyan);">Tag commit & publish OIDC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 3: Trajectory Visualizer DAG (Col 8) -->
+    <div class="widget-card col-8">
+      <div class="widget-header">
+        <div class="widget-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Live Trajectory DAG · #release-260-audit
+        </div>
+        <span style="font-size:11px; font-family:var(--font-mono); color:var(--text-2);">Step 4 / 6</span>
+      </div>
+      <div class="dag-nodes">
+        <div class="dag-node">
+          <b>User Prompt</b>
+          <span>init session</span>
+        </div>
+        <div class="dag-arrow">→</div>
+        <div class="dag-node">
+          <b>Release Mgr</b>
+          <span>task channel</span>
+        </div>
+        <div class="dag-arrow">→</div>
+        <div class="dag-node">
+          <b>git diff</b>
+          <span>tool bash</span>
+        </div>
+        <div class="dag-arrow">→</div>
+        <div class="dag-node active">
+          <b>Code Review</b>
+          <span style="color:var(--cyan);">auditing PRs...</span>
+        </div>
+        <div class="dag-arrow">→</div>
+        <div class="dag-node" style="opacity:0.4;">
+          <b>Final Verdict</b>
+          <span>pending</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 4: Active Agents Roster (Col 4) -->
+    <div class="widget-card col-4">
+      <div class="widget-header">
+        <div class="widget-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Active Subagents (My Network)
+        </div>
+        <span style="font-size:11px; color:#34D399; font-weight:700;">3 Online</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:10px; background:var(--surface-2); padding:8px 10px; border-radius:10px;">
+          <div class="avatar" style="--hue:#38BDF8; width:30px; height:30px; font-size:11px;"><b>RM</b><i class="is-online"></i></div>
+          <div style="flex:1;"><b style="font-size:12.5px;">Release Manager</b><div style="font-size:11px; color:var(--text-3);">Coordinating build</div></div>
+          <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-2);">0.8s ago</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; background:var(--surface-2); padding:8px 10px; border-radius:10px;">
+          <div class="avatar" style="--hue:#9366FF; width:30px; height:30px; font-size:11px;"><b>CR</b><i class="is-working"></i></div>
+          <div style="flex:1;"><b style="font-size:12.5px;">Code Reviewer</b><div style="font-size:11px; color:var(--text-3);">Analyzing AST diff</div></div>
+          <span style="font-size:10px; font-family:var(--font-mono); color:var(--cyan);">working</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; background:var(--surface-2); padding:8px 10px; border-radius:10px;">
+          <div class="avatar" style="--hue:#10B981; width:30px; height:30px; font-size:11px;"><b>TR</b><i class="is-online"></i></div>
+          <div style="flex:1;"><b style="font-size:12.5px;">Test Runner</b><div style="font-size:11px; color:var(--text-3);">Green (42 tests)</div></div>
+          <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-2);">idle</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setTheme(theme) {
+      document.body.dataset.direction = theme;
+      document.querySelectorAll('.theme-toggle button').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(theme));
+      });
+    }
+  </script>
+</body>
+</html>
