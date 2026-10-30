@@ -55,54 +55,68 @@ function svgOpen(size, label, className = '') {
 }
 
 export function logoMark(direction, size = 64) {
-  // Common DNA across all themes: prompt chevron '>_' merged with neural/messenger loop
-  // creating an unmistakable, tech-first cyber mark that directly echoes terminal '>_ Fa'.
+  // Theme-specific variants with identical high-precision geometry (no overlapping paths):
   if (direction === 'glass') {
+    // Liquid Glass: Frosted pill container with internal prompt >_ and floating refraction node
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      <line x1="28" y1="44" x2="38" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <rect x="26" y="16" width="26" height="22" rx="7" fill="color-mix(in srgb, var(--accent) 18%, transparent)" stroke="var(--accent)" stroke-width="2"/>
-      <circle cx="39" cy="27" r="3.5" fill="var(--accent)"/>
+      <defs>
+        <linearGradient id="glassBorder" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#9366FF" stop-opacity="0.3"/>
+        </linearGradient>
+      </defs>
+      <rect x="6" y="6" width="52" height="52" rx="18" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="url(#glassBorder)" stroke-width="1.8"/>
+      <path d="M21 23 L31 32 L21 41" fill="none" stroke="var(--ink-1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="36" y1="41" x2="44" y2="41" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="40" cy="24" r="3.5" fill="var(--accent)"/>
     </svg>`;
   }
   if (direction === 'graphite') {
+    // Graphite: Precision square-cap terminal prompt with tabular status node
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <path d="M10 20 L22 32 L10 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
-      <line x1="26" y1="44" x2="36" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
-      <rect x="30" y="16" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2"/>
-      <rect x="38" y="22" width="8" height="8" fill="var(--accent)"/>
+      <rect x="6" y="6" width="52" height="52" rx="10" fill="var(--surface-1)" stroke="var(--hairline)" stroke-width="1.5"/>
+      <path d="M20 22 L31 32 L20 42" fill="none" stroke="var(--ink-1)" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+      <line x1="36" y1="42" x2="44" y2="42" stroke="var(--accent)" stroke-width="3" stroke-linecap="square"/>
+      <rect x="37" y="21" width="7" height="7" fill="var(--accent)"/>
     </svg>`;
   }
   if (direction === 'porcelain') {
+    // Porcelain: Friendly message bubble with terminal prompt cleanly centered inside
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-      <line x1="28" y1="44" x2="40" y2="44" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M28 18 h18 a8 8 0 0 1 8 8 v4 a8 8 0 0 1 -8 8 h-6 l-6 5 v-5 h-6 a8 8 0 0 1 -8 -8 v-4 a8 8 0 0 1 8 -8 z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="41" cy="27" r="3.5" fill="var(--accent)"/>
+      <path d="M12 15 H52 A6 6 0 0 1 58 21 V37 A6 6 0 0 1 52 43 H24 L14 51 V43 H12 A6 6 0 0 1 6 37 V21 A6 6 0 0 1 12 15 Z" fill="var(--surface-2)" stroke="var(--hairline)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M20 24 L27 30 L20 36" fill="none" stroke="var(--ink-1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="32" y1="36" x2="39" y2="36" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="42" cy="25" r="3" fill="var(--accent)"/>
     </svg>`;
   }
-  // Nebula (default)
+  // Nebula (default): Deep space orbital squircle with prompt and violet pulse
   return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-    <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <line x1="28" y1="44" x2="38" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="40" cy="28" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
-    <circle cx="40" cy="28" r="5" fill="var(--accent)"/>
+    <rect x="6" y="6" width="52" height="52" rx="16" fill="var(--surface-2)" stroke="var(--hairline)" stroke-width="1.5"/>
+    <path d="M20 22 L31 32 L20 42" fill="none" stroke="var(--ink-1)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="36" y1="42" x2="45" y2="42" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="40" cy="23" r="4.2" fill="var(--accent)"/>
   </svg>`;
 }
 
 export function appIcon(direction, size = 64) {
   const radius = direction === 'graphite' ? 12 : direction === 'porcelain' ? 20 : 16;
-  const inner = direction === 'graphite'
-    ? '<path d="M16 24 L26 32 L16 40" fill="none" stroke="var(--accent-ink)" stroke-width="3.5" stroke-linecap="square"/><line x1="30" y1="40" x2="40" y2="40" stroke="var(--accent-ink)" stroke-width="3.5"/><rect x="36" y="20" width="12" height="12" fill="var(--accent-ink)"/>'
-    : '<path d="M16 23 L27 32 L16 41" fill="none" stroke="var(--accent-ink)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="31" y1="41" x2="41" y2="41" stroke="var(--accent-ink)" stroke-width="3.6" stroke-linecap="round"/><circle cx="39" cy="25" r="4.5" fill="var(--accent-ink)"/>';
-  return `${svgOpen(size, 'Fa app icon', 'logo-app')}<rect x="2" y="2" width="60" height="60" rx="${radius}" fill="var(--accent)"/>${inner}</svg>`;
+  const isSquareCap = direction === 'graphite';
+  const cap = isSquareCap ? 'square' : 'round';
+  const join = isSquareCap ? 'miter' : 'round';
+  return `${svgOpen(size, 'Fa app icon', 'logo-app')}
+    <rect x="2" y="2" width="60" height="60" rx="${radius}" fill="var(--accent)"/>
+    <!-- Terminal prompt >_ + living agent node on accent canvas -->
+    <path d="M19 22 L30 32 L19 42" fill="none" stroke="var(--accent-ink)" stroke-width="3.5" stroke-linecap="${cap}" stroke-linejoin="${join}"/>
+    <line x1="35" y1="42" x2="44" y2="42" stroke="var(--accent-ink)" stroke-width="3.5" stroke-linecap="${cap}"/>
+    <circle cx="39" cy="23" r="4" fill="var(--accent-ink)"/>
+  </svg>`;
 }
 
 export function favicon(direction, size = 16) {
   return `${svgOpen(size, 'Fa favicon', 'logo-favicon')}
-    <path d="M8 14 L24 32 L8 50" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <line x1="30" y1="50" x2="48" y2="50" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
-    <circle cx="44" cy="22" r="7" fill="var(--accent)"/>
+    <path d="M10 16 L26 32 L10 48" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="32" y1="48" x2="52" y2="48" stroke="var(--accent)" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="44" cy="20" r="7" fill="var(--accent)"/>
   </svg>`;
 }
 
@@ -112,20 +126,22 @@ export function wordmark(direction, width = 280) {
     ? "var(--font-mono)"
     : "var(--font-display)";
   return `<svg class="logo-word" width="${width}" height="${height}" viewBox="0 0 280 60" role="img" aria-label="Fa logo">
-    <!-- CLI Prompt: >_ -->
+    <!-- Clean, non-overlapping CLI prompt icon >_ -->
     <path d="M8 20 L20 32 L8 44" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <line x1="24" y1="44" x2="34" y2="44" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
-    <!-- Brand Name: Fa -->
-    <text x="44" y="44" font-family="${fontDisplay}" font-size="36" font-weight="700" letter-spacing="-1.2" fill="var(--ink-1)">Fa</text>
-    <circle cx="94" cy="42" r="4" fill="var(--accent)"/>
-    <!-- Subtitle descriptor -->
-    <text x="108" y="40" font-family="var(--font-ui)" font-size="11.5" font-weight="700" letter-spacing="2.8" fill="var(--ink-3)">AGENT MESSENGER</text>
+    <line x1="26" y1="44" x2="36" y2="44" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Living agent pulse node -->
+    <circle cx="31" cy="22" r="3.5" fill="var(--accent)"/>
+    <!-- Brand Wordmark Fa -->
+    <text x="48" y="44" font-family="${fontDisplay}" font-size="36" font-weight="700" letter-spacing="-1.2" fill="var(--ink-1)">Fa</text>
+    <circle cx="98" cy="42" r="3.5" fill="var(--accent)"/>
+    <!-- Category descriptor -->
+    <text x="114" y="40" font-family="var(--font-ui)" font-size="11.5" font-weight="700" letter-spacing="2.6" fill="var(--ink-3)">AGENT MESSENGER</text>
   </svg>`;
 }
 
 export const LOGO_NOTES = {
-  glass: 'CLI prompt >_ fused with frosted refractive portal; echoes terminal roots with visionOS luxury.',
-  nebula: 'CLI prompt >_ paired with orbital core; modern cyber-agent messenger for terminal & desktop.',
-  graphite: 'Raw CLI prompt >_ and calibrated target cell; engineered for operators and precision tooling.',
-  porcelain: 'Rounded prompt >_ connected to tactile speech bubble; friendly, approachable and instantly iconic.',
+  glass: 'Frosted acrylic container with clean >_ prompt and floating luminous cyan refraction node.',
+  nebula: 'Obsidian squircle framing the >_ terminal prompt with an iris-violet pulse node.',
+  graphite: 'Drafted miter prompt >_ with tabular status node; clean, raw, engineered.',
+  porcelain: 'Tactile chat bubble housing the terminal prompt >_ without overlapping lines.',
 };

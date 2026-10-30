@@ -41,6 +41,9 @@ npm start
   расчётом, типографика, иконки и логотипы (только inline SVG), галерея
   компонентов и воспроизводимые переходы с spec-строкой. Выбор направления
   сохраняется через `Choose this direction`.
+- **Logos Lab** — отдельная страница `logos.html`: детальная лаборатория бренд-знака
+  и логотипа Fa с 8 интерактивными секциями (канонический A1 Horizon, бабблы C1,
+  развитие капсулы B3, пропорции F/a, ядро агента в отверстии "a").
 
 Прямой вход в mobile-диалог сразу с keyboard:
 
@@ -127,9 +130,10 @@ npm start
 - `model.js` — демо-данные и чистые правила предметной области.
 - `views.js` — HTML-рендеринг экранов и modal flows.
 - `app.js` — маршрутизация, действия, состояние и localStorage preferences.
-- `styleguide.html` + `styleguide.css` + `styleguide_ui.css` — страница трёх
+- `styleguide.html` + `styleguide.css` + `styleguide_ui.css` — страница четырёх
   визуальных направлений: tokens, typography, shape, иконки/логотипы,
   компоненты и motion demos.
+- `logos.html` — отдельная витрина-лаборатория логотипов и фирменного знака Fa.
 - `styleguide.js` — чистые данные направлений и WCAG-математика (тестируется в Node).
 - `styleguide_icons.js` — hand-drawn inline SVG иконки и логотипы Fa.
 - `styleguide_app.js` — рендеринг и взаимодействие страницы styleguide.
