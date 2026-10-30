@@ -55,71 +55,77 @@ function svgOpen(size, label, className = '') {
 }
 
 export function logoMark(direction, size = 64) {
-    if (direction === 'glass') {
+  // Common DNA across all themes: prompt chevron '>_' merged with neural/messenger loop
+  // creating an unmistakable, tech-first cyber mark that directly echoes terminal '>_ Fa'.
+  if (direction === 'glass') {
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <rect x="8" y="12" width="48" height="40" rx="16" fill="color-mix(in srgb, var(--accent) 15%, transparent)" stroke="currentColor" stroke-width="2"/>
-      <circle cx="24" cy="32" r="5" fill="var(--accent)"/>
-      <path d="M35 26h10M35 32h7M35 38h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+      <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="28" y1="44" x2="38" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <rect x="26" y="16" width="26" height="22" rx="7" fill="color-mix(in srgb, var(--accent) 18%, transparent)" stroke="var(--accent)" stroke-width="2"/>
+      <circle cx="39" cy="27" r="3.5" fill="var(--accent)"/>
     </svg>`;
   }
   if (direction === 'graphite') {
-    // Nebula (default)
-  return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-    <circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <circle cx="32" cy="32" r="8" fill="var(--accent)"/>
-    <circle cx="32" cy="10" r="3" fill="var(--accent)"/>
-  </svg>`;
+    return `${svgOpen(size, 'Fa logo', 'logo-mark')}
+      <path d="M10 20 L22 32 L10 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+      <line x1="26" y1="44" x2="36" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <rect x="30" y="16" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="38" y="22" width="8" height="8" fill="var(--accent)"/>
+    </svg>`;
   }
   if (direction === 'porcelain') {
     return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-      <rect x="8" y="14" width="48" height="36" rx="14" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M18 27h18M18 34h11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-      <circle cx="41" cy="40" r="4.4" fill="var(--accent)"/>
+      <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="28" y1="44" x2="40" y2="44" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M28 18 h18 a8 8 0 0 1 8 8 v4 a8 8 0 0 1 -8 8 h-6 l-6 5 v-5 h-6 a8 8 0 0 1 -8 -8 v-4 a8 8 0 0 1 8 -8 z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="41" cy="27" r="3.5" fill="var(--accent)"/>
     </svg>`;
   }
+  // Nebula (default)
   return `${svgOpen(size, 'Fa logo', 'logo-mark')}
-    <path d="M17 9h22l10 10v36H17z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M39 9v10h10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M24 30h16M24 37h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="32" cy="47" r="3.6" fill="var(--accent)"/>
+    <path d="M12 20 L24 32 L12 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="28" y1="44" x2="38" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="40" cy="28" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="40" cy="28" r="5" fill="var(--accent)"/>
   </svg>`;
 }
 
 export function appIcon(direction, size = 64) {
-  const radius = direction === 'graphite' ? 12 : direction === 'porcelain' ? 18 : 6;
-  const mark = direction === 'graphite'
-    ? '<rect x="22" y="22" width="20" height="20" fill="none" stroke="var(--accent-ink)" stroke-width="3"/><rect x="28.5" y="28.5" width="7" height="7" fill="var(--accent-ink)"/>'
-    : direction === 'porcelain'
-      ? '<rect x="16" y="22" width="32" height="22" rx="10" fill="none" stroke="var(--accent-ink)" stroke-width="3"/><circle cx="38" cy="37" r="3.6" fill="var(--accent-ink)"/>'
-      : '<path d="M23 18h16l7 7v21H23z" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linejoin="round"/><circle cx="31" cy="40" r="3" fill="var(--accent-ink)"/>';
-  return `${svgOpen(size, 'Fa app icon', 'logo-app')}<rect x="2" y="2" width="60" height="60" rx="${radius}" fill="var(--accent)"/>${mark}</svg>`;
+  const radius = direction === 'graphite' ? 12 : direction === 'porcelain' ? 20 : 16;
+  const inner = direction === 'graphite'
+    ? '<path d="M16 24 L26 32 L16 40" fill="none" stroke="var(--accent-ink)" stroke-width="3.5" stroke-linecap="square"/><line x1="30" y1="40" x2="40" y2="40" stroke="var(--accent-ink)" stroke-width="3.5"/><rect x="36" y="20" width="12" height="12" fill="var(--accent-ink)"/>'
+    : '<path d="M16 23 L27 32 L16 41" fill="none" stroke="var(--accent-ink)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="31" y1="41" x2="41" y2="41" stroke="var(--accent-ink)" stroke-width="3.6" stroke-linecap="round"/><circle cx="39" cy="25" r="4.5" fill="var(--accent-ink)"/>';
+  return `${svgOpen(size, 'Fa app icon', 'logo-app')}<rect x="2" y="2" width="60" height="60" rx="${radius}" fill="var(--accent)"/>${inner}</svg>`;
 }
 
 export function favicon(direction, size = 16) {
-  const shape = direction === 'graphite'
-    ? '<rect x="4" y="4" width="40" height="40" fill="none" stroke="currentColor" stroke-width="7"/><rect x="24" y="24" width="16" height="16" fill="var(--accent)"/>'
-    : direction === 'porcelain'
-      ? '<rect x="4" y="12" width="56" height="38" rx="16" fill="none" stroke="currentColor" stroke-width="7"/><circle cx="42" cy="35" r="6" fill="var(--accent)"/>'
-      : '<path d="M16 8h24l10 10v38H16z" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/><circle cx="32" cy="46" r="6" fill="var(--accent)"/>';
-  return `${svgOpen(size, 'Fa favicon', 'logo-favicon')}${shape}</svg>`;
+  return `${svgOpen(size, 'Fa favicon', 'logo-favicon')}
+    <path d="M8 14 L24 32 L8 50" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="30" y1="50" x2="48" y2="50" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="44" cy="22" r="7" fill="var(--accent)"/>
+  </svg>`;
 }
 
-export function wordmark(direction, width = 168) {
-  const height = Math.round(width * 0.305);
-  const font = direction === 'graphite'
-    ? "var(--font-ui)"
+export function wordmark(direction, width = 280) {
+  const height = Math.round(width * 0.22);
+  const fontDisplay = direction === 'graphite'
+    ? "var(--font-mono)"
     : "var(--font-display)";
-  const weight = direction === 'porcelain' ? 700 : 500;
-  return `<svg class="logo-word" width="${width}" height="${height}" viewBox="0 0 168 51" role="img" aria-label="Fa wordmark">
-    <text x="0" y="37" font-family="${font}" font-size="37" font-weight="${weight}" letter-spacing="-1.1" fill="currentColor">Fa</text>
-    <circle cx="38.5" cy="40" r="4" fill="var(--accent)"/>
-    <text x="50" y="36" font-family="var(--font-ui)" font-size="12.5" font-weight="600" letter-spacing="2.4" fill="var(--ink-3)">AGENT MESSENGER</text>
+  return `<svg class="logo-word" width="${width}" height="${height}" viewBox="0 0 280 60" role="img" aria-label="Fa logo">
+    <!-- CLI Prompt: >_ -->
+    <path d="M8 20 L20 32 L8 44" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="24" y1="44" x2="34" y2="44" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Brand Name: Fa -->
+    <text x="44" y="44" font-family="${fontDisplay}" font-size="36" font-weight="700" letter-spacing="-1.2" fill="var(--ink-1)">Fa</text>
+    <circle cx="94" cy="42" r="4" fill="var(--accent)"/>
+    <!-- Subtitle descriptor -->
+    <text x="108" y="40" font-family="var(--font-ui)" font-size="11.5" font-weight="700" letter-spacing="2.8" fill="var(--ink-3)">AGENT MESSENGER</text>
   </svg>`;
 }
 
 export const LOGO_NOTES = {
-  nebula: 'An orbital ring with a calm iris-violet core; futuristic, focused and easy on the eyes.',
-  glass: 'A frosted pill frame with refraction core; fluid, Apple-inspired depth and luminous oceanic cyan.',
-  graphite: 'A calibrated frame with centre crosshair; the amber cell marks the exact point that needs attention.',
-  porcelain: 'A continuous ceramic pill; the lagoon dot is the living agent inside the vessel.',
+  glass: 'CLI prompt >_ fused with frosted refractive portal; echoes terminal roots with visionOS luxury.',
+  nebula: 'CLI prompt >_ paired with orbital core; modern cyber-agent messenger for terminal & desktop.',
+  graphite: 'Raw CLI prompt >_ and calibrated target cell; engineered for operators and precision tooling.',
+  porcelain: 'Rounded prompt >_ connected to tactile speech bubble; friendly, approachable and instantly iconic.',
 };

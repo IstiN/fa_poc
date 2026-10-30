@@ -103,6 +103,7 @@ function miniMessenger() {
 function renderHero() {
   const d = DIRECTIONS[state.direction];
   return `<div class="sg-hero__copy">
+    <div class="sg-hero__brand" style="margin-bottom: 20px;">${wordmark(state.direction, 240)}</div>
     <p class="sg-hero__eyebrow"><span class="dot"></span>Direction ${DIRECTION_IDS.indexOf(state.direction) + 1} of 3 · ${state.mode} mode</p>
     <h1>${d.name}</h1>
     <p class="sg-hero__tag">${d.tagline}</p>
