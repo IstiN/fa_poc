@@ -67,7 +67,8 @@ test('each direction has a mark, app icon, favicon and wordmark', () => {
 });
 
 test('styleguide links are deep-linkable', () => {
-  assert.deepEqual(parseHash('#direction=graphite&mode=dark'), { direction: 'graphite', mode: 'dark' });
+  assert.deepEqual(parseHash('#direction=graphite&mode=dark'), { direction: 'graphite', mode: 'dark', font: null });
+  assert.deepEqual(parseHash('#direction=glass&mode=dark&font=geist'), { direction: 'glass', mode: 'dark', font: 'geist' });
   assert.equal(parseHash('#direction=nope').direction, null);
   assert.equal(buildHash('porcelain', 'light'), '#direction=porcelain&mode=light');
 });

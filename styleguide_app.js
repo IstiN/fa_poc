@@ -9,6 +9,8 @@ import {
   parseHash,
   buildHash,
   STORAGE_KEY,
+  FONT_PRESETS,
+  FONT_PRESET_IDS,
 } from './styleguide.js';
 import {
   icon,
@@ -20,7 +22,8 @@ import {
   LOGO_NOTES,
 } from './styleguide_icons.js';
 
-const state = { direction: 'porcelain', mode: 'dark', chosen: null };
+const FONT_STORAGE_KEY = 'fa2.styleguide.font';
+const state = { direction: 'porcelain', mode: 'dark', font: 'system', chosen: null };
 const roleNames = Object.fromEntries(COLOR_ROLES.map(([key, name]) => [key, name]));
 const agentKeys = ['agent1', 'agent2', 'agent3', 'agent4', 'agent5', 'agent6'];
 const compareRows = {
@@ -136,15 +139,31 @@ function renderPalette() {
 
 function renderType() {
   const d = DIRECTIONS[state.direction];
+  const activeF = FONT_PRESETS[state.font] || FONT_PRESETS.system;
   const rows = d.type.map(([name, family, size, line, weight, tracking, sample]) => `<div class="type-row type-${family}">
-    <div class="type-row__meta"><b>${name}</b><span>${d.fonts[family].family} · ${size}/${line} · ${weight}</span><span>${tracking} em tracking</span></div>
+    <div class="type-row__meta"><b>${name}</b><span>${activeF.name} · ${size}/${line} · ${weight}</span><span>${tracking} em tracking</span></div>
     <p>${sample}</p>
   </div>`).join('');
-  const fonts = Object.entries(d.fonts).map(([role, font]) => `<div class="sg-card"><h4>${role}</h4><b>${font.family}</b><p class="sg-flutter"><b>Flutter:</b> ${font.flutter}</p></div>`).join('');
-  return `<header class="sg-head"><h2 class="sg-h2"><span class="sg-h2__num">02</span>Typography</h2>
-    <p class="sg-lede">One display voice for moments, one UI voice for everything you operate, one mono voice for commands and numbers.</p></header>
-    <div class="sg-grid sg-grid--3 sg-mb">${fonts}</div>${rows}
-    ${note(d.id === 'graphite' ? 'All numerals are tabular; timestamps and token counts never change width while streaming.' : 'Long agent replies keep a 60–68 character measure on desktop.')}`;
+  
+  const fontCards = FONT_PRESET_IDS.map((fid) => {
+    const f = FONT_PRESETS[fid];
+    const isAct = fid === state.font;
+    return `<div class="sg-card ${isAct ? 'sg-card--active-font' : ''}" style="${isAct ? 'border-color:var(--accent); background:var(--surface-2);' : ''}">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <h4 style="margin:0;">${f.name}</h4>
+        <button type="button" class="btn btn--secondary" data-font-button="${fid}" style="min-height:28px; padding:0 10px; font-size:11.5px;${isAct ? 'background:var(--accent); color:var(--accent-ink);' : ''}">${isAct ? 'Active' : 'Apply'}</button>
+      </div>
+      <p style="font-size:12.5px; color:var(--ink-2); margin:0 0 8px;">${f.note}</p>
+      <p class="sg-flutter" style="margin:0;"><b>Flutter:</b> ${f.flutter}</p>
+    </div>`;
+  }).join('');
+
+  return `<header class="sg-head"><h2 class="sg-h2"><span class="sg-h2__num">02</span>Typography &amp; Font Switcher</h2>
+    <p class="sg-lede">Переключай шрифт прямо в шапке (Apple SF, Geist, Jakarta, Inter, Outfit) или по кнопкам ниже — весь интерфейс мгновенно перестраивается с сохранением выверенного кернинга и контраста.</p></header>
+    <div class="sg-grid sg-grid--2 sg-mb">${fontCards}</div>
+    <h3 class="sg-h3">Шкалы размеров (активный: ${activeF.name})</h3>
+    ${rows}
+    ${note('Все шрифты протестированы на читаемость в ночных и светлых темах, на мелких кеглях 12-14px и в таймстампах.')}`;
 }
 
 function renderShape() {
@@ -244,6 +263,12 @@ function renderAll() {
 function renderSwitcher() {
   const host = document.querySelector('[data-role="direction-switch"]');
   host.innerHTML = DIRECTION_IDS.map((id) => `<button type="button" role="radio" aria-checked="${id === state.direction}" data-direction-button="${id}">${DIRECTIONS[id].name}</button>`).join('');
+  
+  const fontHost = document.querySelector('[data-role="font-switch"]');
+  if (fontHost) {
+    fontHost.innerHTML = FONT_PRESET_IDS.map((id) => `<button type="button" role="radio" aria-checked="${id === state.font}" data-font-button="${id}" title="${FONT_PRESETS[id].note}">${FONT_PRESETS[id].tag}</button>`).join('');
+  }
+
   const mode = document.querySelector('[data-role="mode-toggle"]');
   mode.textContent = state.mode === 'light' ? 'Dark' : 'Light';
   mode.setAttribute('aria-pressed', String(state.mode === 'dark'));
@@ -253,15 +278,17 @@ function renderSwitcher() {
 }
 
 function apply(next, updateHash = true) {
-  state.direction = DIRECTION_IDS.includes(next.direction) ? next.direction : 'folio';
+  state.direction = DIRECTION_IDS.includes(next.direction) ? next.direction : 'porcelain';
   state.mode = next.mode === 'dark' ? 'dark' : 'light';
+  state.font = FONT_PRESET_IDS.includes(next.font) ? next.font : (state.font || 'system');
   const root = document.documentElement;
   root.dataset.direction = state.direction;
   root.dataset.mode = state.mode;
+  root.dataset.font = state.font;
   root.classList.add('sg-theming');
   renderSwitcher();
   renderAll();
-  if (updateHash) history.replaceState(null, '', buildHash(state.direction, state.mode));
+  if (updateHash) history.replaceState(null, '', buildHash(state.direction, state.mode, state.font));
 }
 
 function toast(message) {
@@ -284,13 +311,22 @@ function init() {
   state.chosen = localStorage.getItem(STORAGE_KEY);
   const fromHash = parseHash(location.hash);
   const storedChoice = state.chosen && DIRECTIONS[state.chosen] ? state.chosen : null;
-  apply({ direction: fromHash.direction || storedChoice || 'porcelain', mode: fromHash.mode || 'dark' }, false);
+  const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
+  apply({ direction: fromHash.direction || storedChoice || 'porcelain', mode: fromHash.mode || 'dark', font: fromHash.font || storedFont || 'system' }, false);
   history.replaceState(null, '', buildHash(state.direction, state.mode));
 
   document.addEventListener('click', (event) => {
     const directionButton = event.target.closest('[data-direction-button]');
     if (directionButton) {
-      apply({ direction: directionButton.dataset.directionButton, mode: state.mode });
+      apply({ direction: directionButton.dataset.directionButton, mode: state.mode, font: state.font });
+      return;
+    }
+    const fontButton = event.target.closest('[data-font-button]');
+    if (fontButton) {
+      const f = fontButton.dataset.fontButton;
+      localStorage.setItem(FONT_STORAGE_KEY, f);
+      apply({ direction: state.direction, mode: state.mode, font: f });
+      toast(`Шрифт переключен на ${FONT_PRESETS[f].name}`);
       return;
     }
     if (event.target.closest('[data-role="mode-toggle"]')) {
@@ -310,7 +346,7 @@ function init() {
 
   window.addEventListener('hashchange', () => {
     const parsed = parseHash(location.hash);
-    if (parsed.direction || parsed.mode) apply({ direction: parsed.direction || state.direction, mode: parsed.mode || state.mode }, false);
+    if (parsed.direction || parsed.mode || parsed.font) apply({ direction: parsed.direction || state.direction, mode: parsed.mode || state.mode, font: parsed.font || state.font }, false);
   });
 }
 

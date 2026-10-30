@@ -286,13 +286,75 @@ export function parseHash(hash) {
   const direction = DIRECTION_IDS.includes(params.get('direction')) ? params.get('direction') : null;
   const modeParam = params.get('mode');
   const mode = modeParam === 'dark' || modeParam === 'light' ? modeParam : null;
-  return { direction, mode };
+  const fontParam = params.get('font');
+  const font = FONT_PRESET_IDS.includes(fontParam) ? fontParam : null;
+  return { direction, mode, font };
 }
 
-export function buildHash(direction, mode) {
-  return `#direction=${direction}&mode=${mode}`;
+export function buildHash(direction, mode, font = null) {
+  let h = `#direction=${direction}&mode=${mode}`;
+  if (font && font !== 'system') h += `&font=${font}`;
+  return h;
 }
 
 export function agentHueKeys() {
   return AGENTS.slice();
 }
+
+// =========================================================================
+// READABLE TYPOGRAPHY PRESETS (Switchable live across any theme)
+// =========================================================================
+export const FONT_PRESETS = {
+  system: {
+    id: 'system',
+    name: 'Apple / System SF Pro',
+    tag: 'Apple SF',
+    note: 'Native -apple-system / SF Pro. Maximum legibility, crisp hinting, 0ms load, clean modern messenger feel.',
+    display: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif",
+    ui: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif",
+    mono: "ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace",
+    flutter: 'ThemeData.fallback() or CupertinoThemeData (Native SF)',
+  },
+  geist: {
+    id: 'geist',
+    name: 'Geist (Vercel / Modern Tech)',
+    tag: 'Geist',
+    note: 'Engineered specifically for developer tools and high-density screens by Vercel. Flawless legibility, perfect numbers.',
+    display: "'Geist', -apple-system, system-ui, sans-serif",
+    ui: "'Geist', -apple-system, system-ui, sans-serif",
+    mono: "'Geist Mono', ui-monospace, monospace",
+    flutter: 'GoogleFonts.geist() + GoogleFonts.geistMono()',
+  },
+  jakarta: {
+    id: 'jakarta',
+    name: 'Plus Jakarta Sans',
+    tag: 'Jakarta',
+    note: 'Warm modern geometric neo-grotesque. Friendly yet extremely crisp, wide apertures make text effortless to read.',
+    display: "'Plus Jakarta Sans', system-ui, sans-serif",
+    ui: "'Plus Jakarta Sans', system-ui, sans-serif",
+    mono: "'JetBrains Mono', ui-monospace, monospace",
+    flutter: 'GoogleFonts.plusJakartaSans() + GoogleFonts.jetBrainsMono()',
+  },
+  inter: {
+    id: 'inter',
+    name: 'Inter (Rasmus Andersson)',
+    tag: 'Inter',
+    note: 'The undisputed gold standard for digital UI reading. Tall x-height, distinct letterforms, designed specifically for computer screens.',
+    display: "'Inter', -apple-system, system-ui, sans-serif",
+    ui: "'Inter', -apple-system, system-ui, sans-serif",
+    mono: "'JetBrains Mono', ui-monospace, monospace",
+    flutter: 'GoogleFonts.inter() + GoogleFonts.jetBrainsMono()',
+  },
+  outfit: {
+    id: 'outfit',
+    name: 'Outfit + Inter',
+    tag: 'Outfit',
+    note: 'Modern geometric display in Outfit with rock-solid UI body text in Inter. Premium product feel with zero eye strain.',
+    display: "'Outfit', system-ui, sans-serif",
+    ui: "'Inter', -apple-system, system-ui, sans-serif",
+    mono: "'DM Mono', ui-monospace, monospace",
+    flutter: 'GoogleFonts.outfit() + GoogleFonts.inter()',
+  },
+};
+
+export const FONT_PRESET_IDS = Object.keys(FONT_PRESETS);
